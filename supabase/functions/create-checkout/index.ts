@@ -15,17 +15,24 @@ serve(async (req) => {
   }
 
   try {
-    const { priceId, planName } = await req.json()
+    console.log('Creating checkout session...');
+    const { planName } = await req.json();
+    console.log('Plan selected:', planName);
 
     // Initialize Stripe with the secret key
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
       apiVersion: '2023-10-16',
-    })
+    });
 
     const prices = {
       'Starter': 29700,  // $297.00
       'Growth': 49700,   // $497.00
       'Enterprise': 99700 // $997.00
+    };
+
+    if (!prices[planName]) {
+      console.error('Invalid plan name:', planName);
+      throw new Error(`Invalid plan name: ${planName}`);
     }
 
     // Create Checkout Session
@@ -46,29 +53,38 @@ serve(async (req) => {
       ],
       mode: 'payment',
       success_url: `${req.headers.get('origin')}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get('origin')}/pricing`,
-    })
+      cancel_url: `${req.headers.get('origin')}/#pricing`,
+    });
+
+    console.log('Session created:', session.id);
 
     // Create an order record in the database
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    );
 
-    await supabase.from('orders').insert({
+    const { data: orderData, error: orderError } = await supabase.from('orders').insert({
       stripe_session_id: session.id,
       amount: prices[planName],
       status: 'pending'
-    })
+    }).select();
+
+    if (orderError) {
+      console.error('Error creating order:', orderError);
+    } else {
+      console.log('Order created:', orderData);
+    }
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
-    })
+    });
   } catch (error) {
+    console.error('Checkout error:', error.message);
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
-    })
+    });
   }
-})
+});
