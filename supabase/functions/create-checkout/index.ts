@@ -30,36 +30,36 @@ serve(async (req) => {
       apiVersion: '2023-10-16',
     });
 
-    // Use a single hardcoded price ID that we know is valid
-    // This simplifies the implementation and makes it more robust
-    const priceId = 'price_1RHW2K3YTXYuny55tA3ho7Hd'; // Using the correct format with "1" instead of "0"
-    console.log('Using Stripe price ID:', priceId);
+    // Map plan names to their prices in cents
+    const planPrices = {
+      'Starter': 29700, // $297
+      'Growth': 49700,  // $497
+      'Enterprise': 99700, // $997
+      'Launch Special': 9700 // $97
+    };
 
-    console.log('Creating Stripe checkout session for price ID:', priceId);
-    
-    // Check if the price exists and verify its type
-    try {
-      const price = await stripe.prices.retrieve(priceId);
-      console.log('Price retrieved:', {
-        id: price.id,
-        type: price.type,
-        recurring: price.recurring ? 'yes' : 'no'
-      });
-      
-      // Log a warning if the price is set to recurring but we're using payment mode
-      if (price.recurring && price.recurring.interval) {
-        console.warn('Warning: Using a recurring price with payment mode. This may cause issues.');
-      }
-    } catch (priceError) {
-      console.error('Error retrieving price:', priceError.message);
-      // Continue with checkout attempt even if price retrieval fails
+    // Get the price for the selected plan
+    const amount = planPrices[planName];
+    if (amount === undefined) {
+      console.error('Invalid plan name:', planName);
+      throw new Error(`Invalid plan name: ${planName}`);
     }
     
+    console.log('Using dynamic price for plan:', planName, 'Amount:', amount);
+    
+    // Create checkout session with dynamic pricing instead of using price IDs
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
-          price: priceId,
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: `${planName} Plan`,
+              description: 'Media coverage package',
+            },
+            unit_amount: amount,
+          },
           quantity: 1,
         },
       ],
@@ -80,7 +80,9 @@ serve(async (req) => {
 
       const { data: orderData, error: orderError } = await supabase.from('orders').insert({
         stripe_session_id: session.id,
-        status: 'pending'
+        status: 'pending',
+        amount: amount,
+        currency: 'usd'
       }).select();
 
       if (orderError) {
