@@ -15,20 +15,24 @@ const AuthCallback = () => {
       try {
         setIsProcessing(true);
         
-        // The hash contains the access token and other auth info
+        // Log the full URL for debugging
+        console.log("Current URL:", window.location.href);
+        
+        // Check for access_token in the URL hash
         const hashParams = window.location.hash;
         
         if (hashParams) {
-          console.log("Processing authentication callback");
+          console.log("Hash params detected:", hashParams);
           
-          // If we have auth params in the URL, let Supabase handle them
+          // Process the hash parameters using Supabase's built-in handling
+          // This will automatically handle the tokens in the URL
           const { data, error } = await supabase.auth.getSession();
           
           if (error) {
             throw error;
           }
           
-          // Clear the hash from the URL
+          // Clear the hash from the URL to prevent issues on refresh
           window.history.replaceState({}, document.title, window.location.pathname);
           
           // If we have a session, redirect to submit article
@@ -38,13 +42,16 @@ const AuthCallback = () => {
               description: "You've been successfully authenticated",
             });
             
-            navigate('/submit-article');
+            // Short delay to ensure toast is visible before redirect
+            setTimeout(() => navigate('/submit-article'), 500);
           } else {
-            // If no session, redirect to signup
+            // No session even after processing hash params, redirect to signup
+            console.log("No session found after processing hash");
             navigate('/signup');
           }
         } else {
           // No hash parameters, redirect to home
+          console.log("No hash params found, redirecting to home");
           navigate('/');
         }
       } catch (error) {

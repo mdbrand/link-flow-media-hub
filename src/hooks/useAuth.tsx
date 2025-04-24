@@ -24,40 +24,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     console.log("Setting up auth state listener");
     
-    // Process URL hash if it exists (for email confirmations, password resets, etc.)
-    const handleHashParams = async () => {
-      const hashParams = window.location.hash;
-      if (hashParams && hashParams.includes('access_token')) {
-        console.log("Hash params detected, processing auth redirect");
-        try {
-          // Let Supabase handle the hash params
-          const { data, error } = await supabase.auth.getSession();
-          if (error) throw error;
-          
-          console.log("Session from hash:", data.session?.user?.email);
-          
-          // Clear the hash from the URL to prevent issues on refresh
-          window.history.replaceState({}, document.title, window.location.pathname);
-        } catch (err) {
-          console.error("Error processing auth hash params:", err);
-        }
-      }
-    };
-    
-    // Process hash params first if they exist
-    handleHashParams();
-    
-    // Set up auth state listener
+    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log("Auth state changed:", event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        // On sign-in, redirect to submit article
+        if (event === 'SIGNED_IN' && session) {
+          console.log("User signed in, redirecting to submit-article");
+          // Use setTimeout to avoid any potential state update conflicts
+          setTimeout(() => {
+            navigate('/submit-article');
+          }, 0);
+        }
       }
     );
 
-    // Check for existing session
+    // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       console.log("Initial session check:", session?.user?.email);
       setSession(session);
@@ -66,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [navigate]);
 
   const signOut = async () => {
     try {
