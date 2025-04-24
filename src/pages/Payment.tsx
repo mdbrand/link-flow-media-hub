@@ -18,10 +18,13 @@ const Payment = () => {
 
   // Define valid plans and their prices
   const prices = {
-    'Launch Special': '$97'
+    'Launch Special': '$97',
+    'Starter': '$297',
+    'Growth': '$497',
+    'Enterprise': '$997'
   };
 
-  // Define features for each plan
+  // Define features based on plan
   const features = {
     'Launch Special': [
       "Featured on ALL 12 media sites",
@@ -30,6 +33,30 @@ const Payment = () => {
       "Priority editorial review",
       "14-day publishing window",
       "Special launch pricing"
+    ],
+    'Starter': [
+      "Featured on 4 media sites",
+      "1 article submission",
+      "Basic AI adaptation",
+      "Editorial review",
+      "30-day publishing window"
+    ],
+    'Growth': [
+      "Featured on 8 media sites",
+      "2 article submissions",
+      "Advanced AI adaptation",
+      "Priority editorial review",
+      "21-day publishing window",
+      "Social media amplification"
+    ],
+    'Enterprise': [
+      "Featured on ALL 12 media sites",
+      "3 article submissions",
+      "Premium AI adaptation",
+      "VIP editorial review",
+      "14-day publishing window",
+      "Social media amplification",
+      "Analytics dashboard"
     ]
   };
 
@@ -61,7 +88,7 @@ const Payment = () => {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-gray-500 mb-4">
-              Please return to pricing and select the Launch Special offer.
+              Please return to pricing and select a valid plan.
             </p>
           </CardContent>
           <CardFooter>
@@ -117,7 +144,7 @@ const Payment = () => {
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl">
         <CardHeader>
-          <CardTitle className="text-2xl">Launch Special</CardTitle>
+          <CardTitle className="text-2xl">{planName}</CardTitle>
           <CardDescription>Review your order details before proceeding to payment</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">

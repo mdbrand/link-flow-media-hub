@@ -30,12 +30,22 @@ serve(async (req) => {
       apiVersion: '2023-10-16',
     });
 
-    // Simplified price for $97 launch special
-    const amount = 9700; // $97.00 in cents
+    // Map plan names to prices in cents
+    const priceMap = {
+      'Launch Special': 9700,  // $97.00
+      'Starter': 29700,        // $297.00
+      'Growth': 49700,         // $497.00
+      'Enterprise': 99700      // $997.00
+    };
 
-    console.log('Using fixed price for Launch Special:', amount);
+    const amount = priceMap[planName];
+    if (!amount) {
+      throw new Error(`Invalid plan name: ${planName}`);
+    }
+
+    console.log('Using price for plan:', planName, amount);
     
-    // Create checkout session with fixed pricing
+    // Create checkout session with the appropriate pricing
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -43,8 +53,10 @@ serve(async (req) => {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: 'Launch Special Media Coverage',
-              description: 'Featured on all 12 media sites',
+              name: `${planName} Media Coverage`,
+              description: planName === 'Launch Special' 
+                ? 'Featured on all 12 media sites'
+                : `${planName} Media Coverage Package`,
             },
             unit_amount: amount,
           },
@@ -70,7 +82,8 @@ serve(async (req) => {
         stripe_session_id: session.id,
         status: 'pending',
         amount: amount,
-        currency: 'usd'
+        currency: 'usd',
+        plan_name: planName
       }).select();
 
       if (orderError) {

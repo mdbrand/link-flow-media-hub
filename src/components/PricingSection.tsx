@@ -7,9 +7,55 @@ import { useNavigate } from "react-router-dom";
 const PricingSection = () => {
   const navigate = useNavigate();
 
-  const handlePurchase = () => {
-    navigate(`/payment?plan=Launch Special`);
+  const handlePurchase = (planName: string) => {
+    navigate(`/payment?plan=${encodeURIComponent(planName)}`);
   };
+
+  // Define pricing tiers
+  const pricingTiers = [
+    {
+      name: "Starter",
+      price: "$297",
+      description: "Perfect for small businesses and startups",
+      features: [
+        "Featured on 4 media sites",
+        "1 article submission",
+        "Basic AI adaptation",
+        "Editorial review",
+        "30-day publishing window"
+      ],
+      popular: false
+    },
+    {
+      name: "Growth",
+      price: "$497",
+      description: "Ideal for growing businesses seeking wider reach",
+      features: [
+        "Featured on 8 media sites",
+        "2 article submissions",
+        "Advanced AI adaptation",
+        "Priority editorial review",
+        "21-day publishing window",
+        "Social media amplification"
+      ],
+      popular: true
+    },
+    {
+      name: "Enterprise",
+      price: "$997",
+      description: "Complete solution for established businesses",
+      features: [
+        "Featured on ALL 12 media sites",
+        "3 article submissions",
+        "Premium AI adaptation",
+        "VIP editorial review",
+        "14-day publishing window",
+        "Social media amplification",
+        "Analytics dashboard"
+      ],
+      popular: false
+    }
+  ];
 
   return (
     <section id="pricing" className="py-16 px-4 bg-white">
@@ -28,7 +74,7 @@ const PricingSection = () => {
                 </div>
               </div>
               <Button 
-                onClick={handlePurchase}
+                onClick={() => handlePurchase("Launch Special")}
                 className="bg-white text-[#8B5CF6] hover:bg-purple-50 text-lg px-8 py-6 shadow-md"
               >
                 <CreditCard className="mr-2 h-5 w-5" />
@@ -39,10 +85,57 @@ const PricingSection = () => {
         </div>
 
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Limited Time <span className="text-[#9b87f5]">Media Coverage</span> Offer</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Choose Your <span className="text-[#9b87f5]">Coverage</span> Plan</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Exclusive launch special to help you boost your visibility with our AI-powered content adaptation.
+            Select the perfect package to boost your visibility with our AI-powered content adaptation.
           </p>
+        </div>
+
+        {/* Regular Pricing Tiers */}
+        <div className="grid md:grid-cols-3 gap-8 mt-12">
+          {pricingTiers.map((tier, index) => (
+            <Card 
+              key={index}
+              className={`relative overflow-hidden transition-all hover:shadow-xl ${
+                tier.popular ? "border-[#9b87f5] border-2" : ""
+              }`}
+            >
+              {tier.popular && (
+                <div className="absolute top-0 right-0 bg-[#9b87f5] text-white px-3 py-1 rounded-bl-lg font-medium">
+                  Most Popular
+                </div>
+              )}
+              <CardHeader>
+                <CardTitle>{tier.name}</CardTitle>
+                <CardDescription>{tier.description}</CardDescription>
+                <div className="mt-4">
+                  <span className="text-3xl font-bold">{tier.price}</span>
+                  <span className="text-gray-500 ml-1">one-time</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  {tier.features.map((feature, i) => (
+                    <li key={i} className="flex items-start">
+                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+              <CardFooter>
+                <Button 
+                  onClick={() => handlePurchase(tier.name)}
+                  className={`w-full ${
+                    tier.popular ? "bg-[#9b87f5] hover:bg-[#8B5CF6]" : ""
+                  }`}
+                >
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Select Plan
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
         </div>
       </div>
     </section>
