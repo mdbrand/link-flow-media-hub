@@ -65,11 +65,15 @@ const Signup = () => {
       setSignupError(null);
       console.log("Attempting to sign up with:", { email: values.email });
       
+      // Get the full origin for redirect
+      const origin = window.location.origin;
+      const redirectUrl = `${origin}/auth-callback`;
+      
       const { data, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/submit-article`
+          emailRedirectTo: redirectUrl
         }
       });
 
@@ -95,9 +99,6 @@ const Signup = () => {
           title: "Verification email sent",
           description: "Please check your email to confirm your account before submitting articles.",
         });
-        
-        // Still redirect to submit article, the page will handle auth state
-        navigate('/submit-article');
       }
     } catch (error) {
       console.error("Error details:", error);

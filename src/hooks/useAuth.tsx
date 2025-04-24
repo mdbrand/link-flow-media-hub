@@ -24,7 +24,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     console.log("Setting up auth state listener");
     
-    // Set up auth state listener first
+    // Process URL hash if it exists (for email confirmations, password resets, etc.)
+    const handleHashParams = async () => {
+      const hashParams = window.location.hash;
+      if (hashParams && hashParams.includes('access_token')) {
+        console.log("Hash params detected, processing auth redirect");
+        try {
+          // Let Supabase handle the hash params
+          const { data, error } = await supabase.auth.getSession();
+          if (error) throw error;
+          
+          console.log("Session from hash:", data.session?.user?.email);
+          
+          // Clear the hash from the URL to prevent issues on refresh
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (err) {
+          console.error("Error processing auth hash params:", err);
+        }
+      }
+    };
+    
+    // Process hash params first if they exist
+    handleHashParams();
+    
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log("Auth state changed:", event, session?.user?.email);

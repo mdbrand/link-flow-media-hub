@@ -11,6 +11,7 @@ import Payment from "./pages/Payment";
 import Signup from "./pages/Signup";
 import SubmitArticle from "./pages/SubmitArticle";
 import ReferFriend from "./pages/ReferFriend";
+import AuthCallback from "./pages/AuthCallback";
 import { AuthProvider } from "./hooks/useAuth";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/signup" element={<Signup />} />
             <Route path="/submit-article" element={<SubmitArticle />} />
             <Route path="/refer-friend" element={<ReferFriend />} />
+            <Route path="/auth-callback" element={<AuthCallback />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
