@@ -53,7 +53,7 @@ serve(async (req) => {
           quantity: 1,
         },
       ],
-      mode: 'subscription', // Changed from 'payment' to 'subscription' to match the recurring price
+      mode: 'payment', // Changed back to 'payment' for one-time payments
       success_url: `${req.headers.get('origin')}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get('origin')}/#pricing`,
     });
