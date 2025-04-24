@@ -10,6 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -24,6 +26,7 @@ const Signup = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [signupError, setSignupError] = useState<string | null>(null);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,11 +40,15 @@ const Signup = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
+      setSignupError(null);
       console.log("Attempting to sign up with:", { email: values.email });
       
       const { data, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/submit-article`
+        }
       });
 
       if (error) {
@@ -50,14 +57,29 @@ const Signup = () => {
       }
 
       console.log("Signup successful:", data);
-      toast({
-        title: "Account created",
-        description: "Your account has been created successfully.",
-      });
       
-      navigate('/submit-article');
+      // If we have a session, the user can be immediately signed in
+      if (data?.session) {
+        toast({
+          title: "Account created",
+          description: "Your account has been created successfully.",
+        });
+        
+        // Redirect to submit article page
+        navigate('/submit-article');
+      } else {
+        // If email confirmation is required
+        toast({
+          title: "Verification email sent",
+          description: "Please check your email to confirm your account before submitting articles.",
+        });
+        
+        // Still redirect to submit article, the page will handle auth state
+        navigate('/submit-article');
+      }
     } catch (error) {
       console.error("Error details:", error);
+      setSignupError(error.message || "There was a problem creating your account.");
       toast({
         variant: "destructive",
         title: "Error",
@@ -78,6 +100,12 @@ const Signup = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {signupError && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{signupError}</AlertDescription>
+            </Alert>
+          )}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField

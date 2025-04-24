@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react';
+
+import { useState, useRef, useEffect } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -37,9 +38,30 @@ const SubmitArticle = () => {
     },
   });
 
-  // Redirect if not authenticated
-  if (!loading && !user) {
-    navigate('/signup');
+  // Redirect if not authenticated after loading completes
+  useEffect(() => {
+    if (!loading && !user) {
+      console.log("No authenticated user found, redirecting to signup");
+      toast({
+        variant: "destructive",
+        title: "Authentication required",
+        description: "Please sign up or log in to submit an article",
+      });
+      navigate('/signup');
+    }
+  }, [user, loading, navigate, toast]);
+
+  // If still loading auth state, show loading indicator
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg">Loading...</p>
+      </div>
+    );
+  }
+
+  // If not authenticated and not loading, stop rendering the rest of component
+  if (!user && !loading) {
     return null;
   }
 
