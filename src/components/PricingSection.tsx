@@ -1,10 +1,7 @@
-
 import { Button } from "@/components/ui/button";
-import { Check, CreditCard, Loader } from "lucide-react";
+import { Check, CreditCard } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const pricingPlans = [
   {
@@ -58,41 +55,10 @@ const pricingPlans = [
 ];
 
 const PricingSection = () => {
-  const { toast } = useToast();
-  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  const handlePurchase = async (planName: string) => {
-    try {
-      setLoadingPlan(planName);
-      
-      console.log(`Initiating checkout for plan: ${planName}`);
-      
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { planName },
-      });
-
-      if (error) {
-        console.error("Checkout error:", error);
-        throw error;
-      }
-      
-      console.log("Checkout response:", data);
-      
-      if (data?.url) {
-        window.location.href = data.url;
-      } else {
-        throw new Error("No checkout URL received from server");
-      }
-    } catch (error) {
-      console.error("Purchase error:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "There was a problem initiating the checkout. Please try again.",
-      });
-    } finally {
-      setLoadingPlan(null);
-    }
+  const handlePurchase = (planName: string) => {
+    navigate(`/payment?plan=${planName}`);
   };
 
   return (
@@ -137,20 +103,10 @@ const PricingSection = () => {
               <CardFooter className="pt-4">
                 <Button 
                   onClick={() => handlePurchase(plan.name)}
-                  disabled={loadingPlan !== null}
                   className={`w-full ${plan.recommended ? 'bg-[#9b87f5] hover:bg-[#8B5CF6]' : 'bg-gray-800 hover:bg-gray-700'}`}
                 >
-                  {loadingPlan === plan.name ? (
-                    <>
-                      <Loader className="mr-2 h-4 w-4 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Get Started
-                    </>
-                  )}
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Get Started
                 </Button>
               </CardFooter>
             </Card>
