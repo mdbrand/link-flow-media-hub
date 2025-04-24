@@ -1,3 +1,4 @@
+
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import MediaSites from "../components/MediaSites";
@@ -8,6 +9,7 @@ import TestimonialsSection from "../components/TestimonialsSection";
 import FaqSectionEditable from "../components/FaqSectionEditable";
 import Footer from "../components/Footer";
 import CountdownTimer from "../components/CountdownTimer";
+import BottomCtaBanner from "../components/BottomCtaBanner";
 
 const Index = () => {
   return (
@@ -22,6 +24,7 @@ const Index = () => {
         <PricingSection />
         <TestimonialsSection />
         <FaqSectionEditable />
+        <BottomCtaBanner />
       </main>
       <Footer />
     </div>
