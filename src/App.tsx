@@ -24,7 +24,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <Routes>
-            <Route path="/" element={<AuthCallback />} /> {/* Handle confirmation code at root route */}
+            <Route path="/" element={<Index />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/signup" element={<Signup />} />

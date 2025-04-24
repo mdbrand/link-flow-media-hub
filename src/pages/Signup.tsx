@@ -59,15 +59,24 @@ const Signup = () => {
     );
   }
 
+  // If not authenticated and not loading, stop rendering the rest of component
+  if (!user && !loading) {
+    // Continue rendering signup form
+  }
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
       setSignupError(null);
       console.log("Attempting to sign up with:", { email: values.email });
       
-      // Get origin for redirect (the root path handles the code)
+      // Get the current URL's origin for the redirect
       const origin = window.location.origin;
-      const redirectUrl = origin; // No path, just the origin
+      
+      // Set redirect directly back to the root with code parameter
+      // Supabase will append ?code=XXX to this URL
+      const redirectUrl = origin;
+      
       console.log("Using redirect URL:", redirectUrl);
       
       const { data, error } = await supabase.auth.signUp({

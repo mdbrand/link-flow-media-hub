@@ -2,7 +2,7 @@
 import { useEffect, useState, createContext, useContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useToast } from './use-toast';
 
 interface AuthContextType {
@@ -19,10 +19,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
 
   useEffect(() => {
     console.log("Setting up auth state listener");
+    
+    // Check for verification code in the URL
+    const searchParams = new URLSearchParams(location.search);
+    const code = searchParams.get('code');
+    
+    if (code && location.pathname === '/') {
+      // If we're at the root path with a code, handle it there
+      // The AuthCallback component will process this
+      navigate('/', { replace: true });
+      return;
+    }
     
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -52,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, location]);
 
   const signOut = async () => {
     try {

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -28,25 +29,38 @@ const AuthCallback = () => {
         if (code) {
           console.log("Verification code detected:", code);
           
-          // Exchange the code for a session
-          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-          
-          if (error) {
-            throw error;
-          }
-          
-          // If we have a session, show success message
-          if (data?.session) {
-            toast({
-              title: "Email verified successfully",
-              description: "Your email has been verified and you're now signed in",
-            });
+          try {
+            // Exchange the code for a session
+            const { data, error } = await supabase.auth.exchangeCodeForSession(code);
             
-            // Short delay to ensure toast is visible before redirect
-            setTimeout(() => navigate('/submit-article'), 500);
-          } else {
-            console.log("No session found after exchanging code");
-            navigate('/signup');
+            if (error) {
+              console.error("Error exchanging code:", error);
+              throw error;
+            }
+            
+            console.log("Code exchange response:", data);
+            
+            // If we have a session, show success message
+            if (data?.session) {
+              // Clear the code from the URL to prevent issues on refresh
+              window.history.replaceState({}, document.title, window.location.pathname);
+              
+              toast({
+                title: "Email verified successfully",
+                description: "Your email has been verified and you're now signed in",
+              });
+              
+              // Short delay to ensure toast is visible before redirect
+              setTimeout(() => navigate('/submit-article'), 1000);
+              return;
+            }
+          } catch (codeError) {
+            console.error("Code exchange error:", codeError);
+            toast({
+              variant: "destructive",
+              title: "Verification failed",
+              description: codeError.message || "Could not verify your email. Please try again.",
+            });
           }
         } else if (hashParams && hashParams.includes('access_token')) {
           // Handle the hash params method (keeping this as fallback)
@@ -68,15 +82,13 @@ const AuthCallback = () => {
             });
             
             setTimeout(() => navigate('/submit-article'), 500);
-          } else {
-            console.log("No session found after processing hash");
-            navigate('/signup');
+            return;
           }
-        } else {
-          // No authentication parameters, just show the home page
-          console.log("No authentication parameters found");
-          navigate('/signup');
         }
+        
+        // If we get here, no successful authentication happened
+        console.log("No successful authentication, redirecting to signup");
+        navigate('/signup');
       } catch (error) {
         console.error("Auth callback error:", error);
         toast({
