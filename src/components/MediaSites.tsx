@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Globe } from "lucide-react";
@@ -125,9 +124,6 @@ const MediaSites = () => {
                   <Badge variant="secondary">DR {site.rating}</Badge>
                 </div>
               </CardContent>
-              <CardFooter className="pt-0 justify-center">
-                <span className="text-sm text-[#9b87f5] font-medium">Premium Placement</span>
-              </CardFooter>
             </Card>
           ))}
         </div>

@@ -2,6 +2,11 @@
 import { Button } from "@/components/ui/button";
 
 const Hero = () => {
+  const scrollToPricing = () => {
+    const pricingSection = document.getElementById('pricing');
+    pricingSection?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <section className="py-12 md:py-20 px-4 bg-gradient-to-r from-purple-50 to-indigo-50">
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 items-center">
@@ -14,11 +19,17 @@ const Hero = () => {
             One article, distributed across 12 top-tier publications, custom-tailored by our AI.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white text-lg px-8 py-6">
-              Get Featured Now
+            <Button 
+              onClick={scrollToPricing}
+              className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white text-lg px-8 py-6"
+            >
+              Get Started Now
             </Button>
-            <Button variant="outline" className="border-[#9b87f5] text-[#9b87f5] hover:bg-[#9b87f5]/10 text-lg px-8 py-6">
-              See Locations
+            <Button 
+              variant="outline" 
+              className="border-[#9b87f5] text-[#9b87f5] hover:bg-[#9b87f5]/10 text-lg px-8 py-6"
+            >
+              View Sites
             </Button>
           </div>
         </div>

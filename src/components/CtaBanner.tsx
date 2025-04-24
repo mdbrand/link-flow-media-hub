@@ -2,6 +2,11 @@
 import { Button } from "@/components/ui/button";
 
 const CtaBanner = () => {
+  const scrollToPricing = () => {
+    const pricingSection = document.getElementById('pricing');
+    pricingSection?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <section className="py-12 px-4 bg-[#9b87f5] text-white">
       <div className="max-w-7xl mx-auto text-center">
@@ -11,9 +16,10 @@ const CtaBanner = () => {
           with our premium media placements across trusted publications.
         </p>
         <Button 
+          onClick={scrollToPricing}
           className="bg-white text-[#9b87f5] hover:bg-gray-100 hover:text-[#8B5CF6] text-lg px-8 py-6"
         >
-          Get Started For Free
+          Get Featured In Days Not Months
         </Button>
       </div>
     </section>

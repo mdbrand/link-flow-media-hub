@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Check, CreditCard, Sparkles } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +10,7 @@ const pricingPlans = [
     description: "Perfect for individuals and small businesses",
     recommended: false,
     features: [
-      "Featured on 5 media sites",
+      "Featured on 3 media sites",
       "1 article submission",
       "Basic AI adaptation",
       "Standard editorial review",
@@ -25,14 +24,13 @@ const pricingPlans = [
     description: "Best for growing businesses and professionals",
     recommended: true,
     features: [
-      "Featured on all 12 media sites",
+      "Featured on 6 media sites",
       "1 article submission",
       "Advanced AI optimization",
       "Priority editorial review",
       "14-day publishing window",
       "Detailed performance analytics",
-      "Social media promotion",
-      "PDF certificate of publication"
+      "Social media promotion"
     ]
   },
   {
@@ -42,11 +40,10 @@ const pricingPlans = [
     recommended: false,
     features: [
       "Featured on all 12 media sites",
-      "3 article submissions",
+      "1 article submission",
       "Premium AI customization",
       "VIP editorial treatment",
       "7-day publishing window",
-      "Comprehensive analytics dashboard",
       "Social media campaign",
       "Featured spotlight placement",
       "Dedicated account manager",
@@ -58,10 +55,9 @@ const pricingPlans = [
 const PricingSection = () => {
   const navigate = useNavigate();
 
-  const handlePurchase = (planName) => {
-    // Encode the plan name to handle spaces properly
-    const encodedPlanName = encodeURIComponent(planName);
-    navigate(`/payment?plan=${encodedPlanName}`);
+  const handlePurchase = () => {
+    // Always redirect to the $97 Launch Special
+    navigate(`/payment?plan=Launch Special`);
   };
 
   return (
@@ -81,7 +77,7 @@ const PricingSection = () => {
                 </div>
               </div>
               <Button 
-                onClick={() => handlePurchase('Launch Special')}
+                onClick={() => handlePurchase()}
                 className="bg-white text-[#8B5CF6] hover:bg-purple-50 text-lg px-8 py-6 shadow-md"
               >
                 <CreditCard className="mr-2 h-5 w-5" />
@@ -129,7 +125,7 @@ const PricingSection = () => {
               </CardContent>
               <CardFooter className="pt-4">
                 <Button 
-                  onClick={() => handlePurchase(plan.name)}
+                  onClick={() => handlePurchase()}
                   className={`w-full ${plan.recommended ? 'bg-[#9b87f5] hover:bg-[#8B5CF6]' : 'bg-gray-800 hover:bg-gray-700'}`}
                 >
                   <CreditCard className="mr-2 h-4 w-4" />
