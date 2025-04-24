@@ -11,24 +11,27 @@ import Payment from "./pages/Payment";
 import Signup from "./pages/Signup";
 import SubmitArticle from "./pages/SubmitArticle";
 import ReferFriend from "./pages/ReferFriend";
+import { AuthProvider } from "./hooks/useAuth";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/payment-success" element={<PaymentSuccess />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/submit-article" element={<SubmitArticle />} />
-          <Route path="/refer-friend" element={<ReferFriend />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Toaster />
+          <Sonner />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/submit-article" element={<SubmitArticle />} />
+            <Route path="/refer-friend" element={<ReferFriend />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

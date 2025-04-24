@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { useArticles } from '@/hooks/useArticles';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from "@/hooks/use-toast";
+import Header from '@/components/Header';
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -54,8 +55,11 @@ const SubmitArticle = () => {
   // If still loading auth state, show loading indicator
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-lg">Loading...</p>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-lg">Loading...</p>
+        </div>
       </div>
     );
   }
@@ -97,93 +101,96 @@ const SubmitArticle = () => {
   };
 
   return (
-    <div className="min-h-screen p-4 max-w-4xl mx-auto">
-      <Card>
-        <CardHeader>
-          <CardTitle>Submit Your Article</CardTitle>
-          <CardDescription>
-            Write your article for publication. Minimum 800 words required.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Article Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter article title" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Article Content</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Textarea 
-                          placeholder="Write your article here..." 
-                          className="min-h-[400px]"
-                          {...field}
-                          onChange={handleContentChange}
-                        />
-                        <div className="absolute bottom-2 right-2 flex items-center gap-2 text-sm text-gray-500 bg-white px-2 py-1 rounded-md">
-                          <Text size={16} />
-                          <span>{wordCount} words</span>
-                        </div>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="space-y-4">
-                <FormLabel>Images (Max 3)</FormLabel>
-                <div className="grid grid-cols-3 gap-4">
-                  {images.map((image, index) => (
-                    <img 
-                      key={index}
-                      src={image}
-                      alt={`Upload ${index + 1}`}
-                      className="w-full h-32 object-cover rounded-md"
-                    />
-                  ))}
-                </div>
-                {images.length < 3 && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    Upload Image ({3 - images.length} remaining)
-                  </Button>
-                )}
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleImageUpload}
-                  accept="image/*"
-                  className="hidden"
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <div className="flex-1 p-4 max-w-4xl mx-auto w-full">
+        <Card>
+          <CardHeader>
+            <CardTitle>Submit Your Article</CardTitle>
+            <CardDescription>
+              Write your article for publication. Minimum 800 words required.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Article Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter article title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Submitting..." : "Submit Article"}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+                <FormField
+                  control={form.control}
+                  name="content"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Article Content</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Textarea 
+                            placeholder="Write your article here..." 
+                            className="min-h-[400px]"
+                            {...field}
+                            onChange={handleContentChange}
+                          />
+                          <div className="absolute bottom-2 right-2 flex items-center gap-2 text-sm text-gray-500 bg-white px-2 py-1 rounded-md">
+                            <Text size={16} />
+                            <span>{wordCount} words</span>
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="space-y-4">
+                  <FormLabel>Images (Max 3)</FormLabel>
+                  <div className="grid grid-cols-3 gap-4">
+                    {images.map((image, index) => (
+                      <img 
+                        key={index}
+                        src={image}
+                        alt={`Upload ${index + 1}`}
+                        className="w-full h-32 object-cover rounded-md"
+                      />
+                    ))}
+                  </div>
+                  {images.length < 3 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      Upload Image ({3 - images.length} remaining)
+                    </Button>
+                  )}
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                </div>
+
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? "Submitting..." : "Submit Article"}
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

@@ -3,9 +3,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -44,10 +46,29 @@ const Header = () => {
           ))}
         </nav>
         
-        <div className="hidden md:block">
-          <Button className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white">
-            Get Started Now
-          </Button>
+        <div className="hidden md:flex items-center gap-4">
+          {user ? (
+            <>
+              <Link to="/submit-article">
+                <Button variant="outline" className="hover:bg-[#9b87f5] hover:text-white">
+                  Submit Article
+                </Button>
+              </Link>
+              <Button 
+                onClick={signOut}
+                variant="ghost"
+                className="text-gray-600 hover:text-[#9b87f5]"
+              >
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <Link to="/signup">
+              <Button className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white">
+                Get Started Now
+              </Button>
+            </Link>
+          )}
         </div>
         
         {/* Mobile menu */}
@@ -64,9 +85,36 @@ const Header = () => {
                   {link.name}
                 </a>
               ))}
-              <Button className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white w-full">
-                Get Started Now
-              </Button>
+              {user ? (
+                <>
+                  <Link 
+                    to="/submit-article" 
+                    className="text-gray-600 hover:text-[#9b87f5] font-medium transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Submit Article
+                  </Link>
+                  <Button 
+                    onClick={() => {
+                      signOut();
+                      setIsMenuOpen(false);
+                    }}
+                    variant="ghost"
+                    className="justify-start p-0 h-auto text-gray-600 hover:text-[#9b87f5] font-medium transition-colors"
+                  >
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <Link 
+                  to="/signup"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Button className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white w-full">
+                    Get Started Now
+                  </Button>
+                </Link>
+              )}
             </nav>
           </div>
         )}
