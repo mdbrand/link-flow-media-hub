@@ -19,5 +19,10 @@ export const faqs = [
   {
     question: "What types of content can I submit?",
     answer: "We accept thought leadership articles, industry analyses, how-to guides, and opinion pieces. Content should be informative and valuable to readers rather than overtly promotional. Our team can help guide you on creating appropriate content during onboarding."
+  },
+  {
+    question: "Is it really only $97 for all 12 sites?",
+    answer: "Yes it is only $97 to have a unique article published on 12 different sites. Our AI will write a brand new article based on the single article you submit and make it fit the theme of each website so your article is relevant and aligned. It's a great deal, but won't last long."
   }
 ];
+
