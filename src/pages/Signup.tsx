@@ -1,4 +1,3 @@
-
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -59,11 +58,6 @@ const Signup = () => {
     );
   }
 
-  // If not authenticated and not loading, stop rendering the rest of component
-  if (!user && !loading) {
-    // Continue rendering signup form
-  }
-
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
@@ -77,7 +71,7 @@ const Signup = () => {
       // Supabase will append ?code=XXX to this URL
       const redirectUrl = origin;
       
-      console.log("Using redirect URL:", redirectUrl);
+      console.log("Using redirect URL:", redirectUrl, "Full origin:", origin);
       
       const { data, error } = await supabase.auth.signUp({
         email: values.email,
@@ -86,6 +80,8 @@ const Signup = () => {
           emailRedirectTo: redirectUrl
         }
       });
+
+      console.log("Signup response:", { data, error });
 
       if (error) {
         console.error("Signup error:", error);
@@ -111,7 +107,7 @@ const Signup = () => {
         });
       }
     } catch (error) {
-      console.error("Error details:", error);
+      console.error("Detailed signup error:", error);
       setSignupError(error.message || "There was a problem creating your account.");
       toast({
         variant: "destructive",
