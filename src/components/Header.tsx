@@ -10,6 +10,11 @@ const Header = () => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
+  const scrollToPricing = () => {
+    const pricingSection = document.getElementById('pricing');
+    pricingSection?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   const navLinks = [
     { name: "Home", url: "/" },
     { name: "How it Works", url: "#how-it-works" },
@@ -60,11 +65,12 @@ const Header = () => {
               </Button>
             </>
           ) : (
-            <Link to="/signup">
-              <Button className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white">
-                Start
-              </Button>
-            </Link>
+            <Button 
+              onClick={scrollToPricing}
+              className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white"
+            >
+              Start Here
+            </Button>
           )}
         </div>
         
@@ -102,14 +108,12 @@ const Header = () => {
                   </Button>
                 </>
               ) : (
-                <Link 
-                  to="/signup"
-                  onClick={() => setIsMenuOpen(false)}
+                <Button 
+                  onClick={scrollToPricing}
+                  className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white w-full"
                 >
-                  <Button className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white w-full">
-                    Start
-                  </Button>
-                </Link>
+                  Start Here
+                </Button>
               )}
             </nav>
           </div>
