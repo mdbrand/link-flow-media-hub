@@ -2,20 +2,34 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Footer = () => {
-  const handleNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleNewsletterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const email = form.email.value;
     
-    // Simulate form submission
     if (email) {
-      toast({
-        title: "Success!",
-        description: "You've been subscribed to our newsletter.",
-      });
-      form.reset();
+      try {
+        const { error } = await supabase
+          .from('newsletter_subscriptions')
+          .insert([{ email }]);
+        
+        if (error) throw error;
+        
+        toast({
+          title: "Success!",
+          description: "You're subscribed, and be on the look out for FREE featured opportunities as well",
+        });
+        form.reset();
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to subscribe. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
