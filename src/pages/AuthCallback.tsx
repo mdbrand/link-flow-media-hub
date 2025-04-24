@@ -17,28 +17,25 @@ const AuthCallback = () => {
         setIsProcessing(true);
         
         // Log the full URL for debugging
-        console.log("Current URL:", window.location.href);
+        console.log("AuthCallback: Current URL:", window.location.href);
         
         // Get URL parameters
         const searchParams = new URLSearchParams(location.search);
         const code = searchParams.get('code');
         
-        // Check for hash parameters (old method)
-        const hashParams = window.location.hash;
-        
         if (code) {
-          console.log("Verification code detected:", code);
+          console.log("AuthCallback: Verification code detected:", code);
           
           try {
             // Exchange the code for a session
             const { data, error } = await supabase.auth.exchangeCodeForSession(code);
             
             if (error) {
-              console.error("Error exchanging code:", error);
+              console.error("AuthCallback: Error exchanging code:", error);
               throw error;
             }
             
-            console.log("Code exchange response:", data);
+            console.log("AuthCallback: Code exchange response:", data);
             
             // If we have a session, show success message
             if (data?.session) {
@@ -50,47 +47,60 @@ const AuthCallback = () => {
                 description: "Your email has been verified and you're now signed in",
               });
               
-              // Short delay to ensure toast is visible before redirect
+              // Redirect to submit article page
               setTimeout(() => navigate('/submit-article'), 1000);
               return;
             }
           } catch (codeError) {
-            console.error("Code exchange error:", codeError);
+            console.error("AuthCallback: Code exchange error:", codeError);
             toast({
               variant: "destructive",
               title: "Verification failed",
               description: codeError.message || "Could not verify your email. Please try again.",
             });
           }
-        } else if (hashParams && hashParams.includes('access_token')) {
-          // Handle the hash params method (keeping this as fallback)
-          console.log("Hash params detected:", hashParams);
+        } else {
+          console.log("AuthCallback: No code found in URL, checking for hash params");
           
-          const { data, error } = await supabase.auth.getSession();
+          // Check for hash parameters (old method)
+          const hashParams = window.location.hash;
           
-          if (error) {
-            throw error;
-          }
-          
-          // Clear the hash from the URL to prevent issues on refresh
-          window.history.replaceState({}, document.title, window.location.pathname);
-          
-          if (data?.session) {
-            toast({
-              title: "Authentication successful",
-              description: "You've been successfully authenticated",
-            });
+          if (hashParams && hashParams.includes('access_token')) {
+            console.log("AuthCallback: Hash params detected:", hashParams);
             
-            setTimeout(() => navigate('/submit-article'), 500);
-            return;
+            const { data, error } = await supabase.auth.getSession();
+            
+            if (error) {
+              throw error;
+            }
+            
+            // Clear the hash from the URL to prevent issues on refresh
+            window.history.replaceState({}, document.title, window.location.pathname);
+            
+            if (data?.session) {
+              toast({
+                title: "Authentication successful",
+                description: "You've been successfully authenticated",
+              });
+              
+              setTimeout(() => navigate('/submit-article'), 500);
+              return;
+            }
+          } else {
+            console.log("AuthCallback: No authentication parameters found");
           }
         }
         
         // If we get here, no successful authentication happened
-        console.log("No successful authentication, redirecting to signup");
+        console.log("AuthCallback: No successful authentication, redirecting to signup");
+        toast({
+          variant: "destructive",
+          title: "Authentication error",
+          description: "There was a problem with your verification link. Please try signing up again.",
+        });
         navigate('/signup');
       } catch (error) {
-        console.error("Auth callback error:", error);
+        console.error("AuthCallback: Unhandled error:", error);
         toast({
           variant: "destructive",
           title: "Authentication error",

@@ -23,30 +23,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
 
   useEffect(() => {
-    console.log("Setting up auth state listener");
+    console.log("AuthProvider: Setting up auth state listener");
     
     // Check for verification code in the URL
     const searchParams = new URLSearchParams(location.search);
     const code = searchParams.get('code');
     
-    if (code && location.pathname === '/') {
-      // If we're at the root path with a code, handle it there
-      // The AuthCallback component will process this
-      navigate('/', { replace: true });
-      return;
+    if (code) {
+      console.log("AuthProvider: Code detected in URL:", location.pathname);
+      
+      // If we're at the root path with a code, redirect to auth-callback
+      if (location.pathname === '/') {
+        console.log("AuthProvider: Redirecting code from root to auth-callback");
+        navigate('/auth-callback' + location.search, { replace: true });
+        return;
+      }
     }
     
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log("Auth state changed:", event, session?.user?.email);
+        console.log("AuthProvider: Auth state changed:", event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
         
         // On sign-in, redirect to submit article
         if (event === 'SIGNED_IN' && session) {
-          console.log("User signed in, redirecting to submit-article");
+          console.log("AuthProvider: User signed in, redirecting to submit-article");
           // Use setTimeout to avoid any potential state update conflicts
           setTimeout(() => {
             navigate('/submit-article');
@@ -57,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log("Initial session check:", session?.user?.email);
+      console.log("AuthProvider: Initial session check:", session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -75,7 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       navigate('/signup');
     } catch (error) {
-      console.error("Sign out error:", error);
+      console.error("AuthProvider: Sign out error:", error);
       toast({
         variant: "destructive",
         title: "Error signing out",

@@ -43,6 +43,7 @@ const Signup = () => {
   // If already authenticated, redirect to submit article
   useEffect(() => {
     if (user && !loading) {
+      console.log("Signup: User already authenticated, redirecting to submit-article");
       navigate('/submit-article');
     }
   }, [user, loading, navigate]);
@@ -63,36 +64,32 @@ const Signup = () => {
     try {
       setIsLoading(true);
       setSignupError(null);
-      console.log("Attempting to sign up with:", { email: values.email });
+      console.log("Signup: Attempting to sign up with:", { email: values.email });
       
-      // Get the current URL's origin for the redirect
+      // Get the current origin and path for the redirect
       const origin = window.location.origin;
+      const redirectTo = `${origin}/auth-callback`;
       
-      // Set redirect directly back to the root with code parameter
-      // Supabase will append ?code=XXX to this URL
-      const redirectUrl = origin;
-      
-      console.log("Using redirect URL:", redirectUrl, "Full origin:", origin);
+      console.log("Signup: Using redirect URL:", redirectTo);
       
       const { data, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
         options: {
-          emailRedirectTo: redirectUrl
+          emailRedirectTo: redirectTo
         }
       });
 
-      console.log("Signup response:", { data, error });
+      console.log("Signup: Response received:", { data, error });
 
       if (error) {
-        console.error("Signup error:", error);
+        console.error("Signup: Error during signup:", error);
         throw error;
       }
-
-      console.log("Signup successful:", data);
       
       // If we have a session, the user can be immediately signed in
       if (data?.session) {
+        console.log("Signup: Session available, user can be immediately signed in");
         toast({
           title: "Account created",
           description: "Your account has been created successfully.",
@@ -102,13 +99,14 @@ const Signup = () => {
         navigate('/submit-article');
       } else {
         // If email confirmation is required
+        console.log("Signup: Email confirmation required");
         toast({
           title: "Verification email sent",
           description: "Please check your email to confirm your account before submitting articles.",
         });
       }
     } catch (error) {
-      console.error("Detailed signup error:", error);
+      console.error("Signup: Detailed error:", error);
       setSignupError(error.message || "There was a problem creating your account.");
       toast({
         variant: "destructive",
