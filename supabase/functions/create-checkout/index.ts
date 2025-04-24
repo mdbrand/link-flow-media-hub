@@ -30,12 +30,12 @@ serve(async (req) => {
       apiVersion: '2023-10-16',
     });
 
-    // Map plans to their respective Stripe price IDs
+    // Updated to use the new price ID for all plans
     const priceIds = {
-      'Launch Special': 'price_0RHQkp3YTXYuny55968dG82q', // Updated price ID
-      'Starter': 'price_0RHQkp3YTXYuny55968dG82q', // Using same ID for all plans
-      'Growth': 'price_0RHQkp3YTXYuny55968dG82q',
-      'Enterprise': 'price_0RHQkp3YTXYuny55968dG82q'
+      'Launch Special': 'price_0RHW2K3YTXYuny55tA3ho7Hd', 
+      'Starter': 'price_0RHW2K3YTXYuny55tA3ho7Hd', 
+      'Growth': 'price_0RHW2K3YTXYuny55tA3ho7Hd',
+      'Enterprise': 'price_0RHW2K3YTXYuny55tA3ho7Hd'
     };
 
     const priceId = priceIds[planName];
