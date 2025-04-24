@@ -58,12 +58,10 @@ const pricingPlans = [
 const PricingSection = () => {
   const navigate = useNavigate();
 
-  const handlePurchase = (planName: string, isSpecialOffer: boolean = false) => {
-    if (isSpecialOffer) {
-      navigate(`/payment?plan=Launch Special`);
-    } else {
-      navigate(`/payment?plan=${planName}`);
-    }
+  const handlePurchase = (planName) => {
+    // Encode the plan name to handle spaces properly
+    const encodedPlanName = encodeURIComponent(planName);
+    navigate(`/payment?plan=${encodedPlanName}`);
   };
 
   return (
@@ -83,7 +81,7 @@ const PricingSection = () => {
                 </div>
               </div>
               <Button 
-                onClick={() => handlePurchase('Launch Special', true)}
+                onClick={() => handlePurchase('Launch Special')}
                 className="bg-white text-[#8B5CF6] hover:bg-purple-50 text-lg px-8 py-6 shadow-md"
               >
                 <CreditCard className="mr-2 h-5 w-5" />

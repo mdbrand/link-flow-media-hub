@@ -15,6 +15,7 @@ const Payment = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Define valid plans and their prices
   const prices = {
     'Starter': '$297',
     'Growth': '$497',
@@ -22,6 +23,7 @@ const Payment = () => {
     'Launch Special': '$97'
   };
 
+  // Define features for each plan
   const features = {
     'Starter': [
       "Featured on 5 media sites",
@@ -63,15 +65,24 @@ const Payment = () => {
     ]
   };
 
+  // Validate plan on component mount and when URL params change
   useEffect(() => {
-    // Validate plan name when component mounts
-    if (!planName || !prices[planName]) {
+    console.log('Current plan from URL:', planName);
+    console.log('Valid plans:', Object.keys(prices));
+    
+    if (!planName) {
+      console.error('No plan name provided in URL');
+      setError('No plan selected');
+    } else if (!prices[planName]) {
+      console.error('Invalid plan name:', planName);
       setError('Invalid plan selected');
     } else {
+      console.log('Valid plan selected:', planName);
       setError('');
     }
   }, [planName]);
 
+  // Handle invalid plan - show error card
   if (!planName || !prices[planName]) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
@@ -80,6 +91,11 @@ const Payment = () => {
             <CardTitle>Invalid Plan</CardTitle>
             <CardDescription>The selected plan is not valid.</CardDescription>
           </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-500 mb-4">
+              Please return to pricing and select one of our available plans: Starter, Growth, Enterprise, or Launch Special.
+            </p>
+          </CardContent>
           <CardFooter>
             <Button onClick={() => navigate('/#pricing')} className="w-full">
               Return to Pricing
@@ -90,6 +106,7 @@ const Payment = () => {
     );
   }
 
+  // Handle checkout process
   const handleCheckout = async () => {
     try {
       setIsLoading(true);
