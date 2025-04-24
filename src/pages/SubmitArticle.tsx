@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -10,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Text } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from 'react-router-dom';
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -22,6 +22,7 @@ const SubmitArticle = () => {
   const [images, setImages] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,6 +60,7 @@ const SubmitArticle = () => {
       title: "Article Submitted",
       description: "Your article has been submitted for review.",
     });
+    navigate('/refer-friend');
   };
 
   return (

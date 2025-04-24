@@ -10,6 +10,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import Payment from "./pages/Payment";
 import Signup from "./pages/Signup";
 import SubmitArticle from "./pages/SubmitArticle";
+import ReferFriend from "./pages/ReferFriend";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/submit-article" element={<SubmitArticle />} />
+          <Route path="/refer-friend" element={<ReferFriend />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
