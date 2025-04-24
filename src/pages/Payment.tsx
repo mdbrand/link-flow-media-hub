@@ -2,7 +2,7 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader } from "lucide-react";
+import { AlertCircle, Loader } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -14,6 +14,7 @@ const Payment = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [detailedError, setDetailedError] = useState('');
 
   // Define valid plans and their prices
   const prices = {
@@ -111,6 +112,7 @@ const Payment = () => {
     try {
       setIsLoading(true);
       setError('');
+      setDetailedError('');
       console.log('Initiating checkout for plan:', planName);
       
       const { data, error } = await supabase.functions.invoke('create-checkout', {
@@ -131,7 +133,9 @@ const Payment = () => {
       }
     } catch (error) {
       console.error("Purchase error:", error);
-      setError(error.message || 'Failed to process payment');
+      const errorMessage = error.message || 'Failed to process payment';
+      setError(errorMessage);
+      setDetailedError(JSON.stringify(error, null, 2));
       toast({
         variant: "destructive",
         title: "Error",
@@ -169,8 +173,20 @@ const Payment = () => {
           </div>
           
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-md">
-              {error}
+            <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-md">
+              <div className="flex items-center gap-2 mb-2">
+                <AlertCircle className="h-5 w-5" />
+                <h4 className="font-medium">Error</h4>
+              </div>
+              <p>{error}</p>
+              {detailedError && (
+                <details className="mt-2">
+                  <summary className="cursor-pointer text-sm">View technical details</summary>
+                  <pre className="mt-2 p-2 bg-red-100 rounded overflow-x-auto text-xs">
+                    {detailedError}
+                  </pre>
+                </details>
+              )}
             </div>
           )}
         </CardContent>

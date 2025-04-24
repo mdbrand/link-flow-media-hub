@@ -45,6 +45,25 @@ serve(async (req) => {
     }
 
     console.log('Creating Stripe checkout session for price ID:', priceId);
+    
+    // Check if the price exists and verify its type
+    try {
+      const price = await stripe.prices.retrieve(priceId);
+      console.log('Price retrieved:', {
+        id: price.id,
+        type: price.type,
+        recurring: price.recurring ? 'yes' : 'no'
+      });
+      
+      // Log a warning if the price is set to recurring but we're using payment mode
+      if (price.recurring && price.recurring.interval) {
+        console.warn('Warning: Using a recurring price with payment mode. This may cause issues.');
+      }
+    } catch (priceError) {
+      console.error('Error retrieving price:', priceError.message);
+      // Continue with checkout attempt even if price retrieval fails
+    }
+    
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -53,7 +72,7 @@ serve(async (req) => {
           quantity: 1,
         },
       ],
-      mode: 'payment', // Changed back to 'payment' for one-time payments
+      mode: 'payment',
       success_url: `${req.headers.get('origin')}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get('origin')}/#pricing`,
     });
@@ -88,7 +107,7 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    console.error('Checkout error:', error.message);
+    console.error('Checkout error:', error.message, error.stack);
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
