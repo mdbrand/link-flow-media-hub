@@ -35,7 +35,7 @@ const ReferFriend = () => {
           <CardContent className="space-y-6">
             <div className="aspect-video rounded-lg overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1518005020951-eccb494ad742"
+                src="/lovable-uploads/81a18221-f6de-4a94-9591-d5c694bed5fe.png"
                 alt="Professional podcast studio setup"
                 className="w-full h-full object-cover"
               />
@@ -45,21 +45,6 @@ const ReferFriend = () => {
               <p className="text-lg text-gray-700">
                 Get featured on top podcasts and share your story with the world through PodMatch!
               </p>
-
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="bg-purple-50 p-4 rounded-lg">
-                  <p className="text-gray-700 italic">
-                    "Within just 2 weeks of joining PodMatch, I was booked on 5 different podcasts. The platform made it incredibly easy to connect with the right hosts."
-                  </p>
-                  <p className="mt-2 font-semibold text-purple-700">- Sarah Johnson, Author</p>
-                </div>
-                <div className="bg-purple-50 p-4 rounded-lg">
-                  <p className="text-gray-700 italic">
-                    "PodMatch streamlined everything. I've secured more podcast appearances in one month than I did in the entire previous year!"
-                  </p>
-                  <p className="mt-2 font-semibold text-purple-700">- Michael Chen, Business Coach</p>
-                </div>
-              </div>
 
               <div className="space-y-4">
                 <Button 
