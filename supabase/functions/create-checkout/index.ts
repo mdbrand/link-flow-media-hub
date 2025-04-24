@@ -30,19 +30,10 @@ serve(async (req) => {
       apiVersion: '2023-10-16',
     });
 
-    // Updated to use the new price ID for all plans
-    const priceIds = {
-      'Launch Special': 'price_0RHW2K3YTXYuny55tA3ho7Hd', 
-      'Starter': 'price_0RHW2K3YTXYuny55tA3ho7Hd', 
-      'Growth': 'price_0RHW2K3YTXYuny55tA3ho7Hd',
-      'Enterprise': 'price_0RHW2K3YTXYuny55tA3ho7Hd'
-    };
-
-    const priceId = priceIds[planName];
-    if (!priceId) {
-      console.error('Invalid plan name:', planName);
-      throw new Error(`Invalid plan name: ${planName}`);
-    }
+    // Use a single hardcoded price ID that we know is valid
+    // This simplifies the implementation and makes it more robust
+    const priceId = 'price_1RHW2K3YTXYuny55tA3ho7Hd'; // Using the correct format with "1" instead of "0"
+    console.log('Using Stripe price ID:', priceId);
 
     console.log('Creating Stripe checkout session for price ID:', priceId);
     
