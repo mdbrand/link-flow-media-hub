@@ -42,6 +42,14 @@ const ReferFriend = () => {
             </div>
             
             <div className="space-y-6 text-center">
+              <h3 className="text-2xl font-bold text-purple-700">
+                Podcast Like a Pro Without Lifting a Finger (Okay, Maybe Just One Click)
+              </h3>
+              <p className="text-lg text-gray-700">
+                PodMatch is like having a full-time podcasting assistant, minus the awkward small talk. 
+                It finds your perfect match, handles the admin grunt work, and keeps your interviews 
+                flowing like hot takes in a Reddit thread.
+              </p>
               <p className="text-lg text-gray-700">
                 Get featured on top podcasts and share your story with the world through PodMatch!
               </p>
