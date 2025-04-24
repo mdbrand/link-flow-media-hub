@@ -127,6 +127,12 @@ const MediaSites = () => {
             </Card>
           ))}
         </div>
+
+        <div className="mt-12 text-center">
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            Our network is constantly growing! Get in early to secure priority placement on new premium media sites as they're added to our network.
+          </p>
+        </div>
       </div>
     </section>
   );
