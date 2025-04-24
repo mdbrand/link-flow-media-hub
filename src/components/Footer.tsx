@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
@@ -18,12 +17,16 @@ const Footer = () => {
       form.reset();
     }
   };
+
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    section?.scrollIntoView({ behavior: 'smooth' });
+  };
   
   return (
     <footer className="bg-gray-900 text-white pt-12 pb-6 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          {/* Company Information */}
           <div>
             <h3 className="text-xl font-bold mb-4">MediaBoost</h3>
             <p className="text-gray-400 mb-4">
@@ -48,19 +51,52 @@ const Footer = () => {
             </div>
           </div>
           
-          {/* Quick Links */}
           <div>
             <h3 className="text-xl font-bold mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              <li><a href="/" className="text-gray-400 hover:text-white transition-colors">Home</a></li>
-              <li><a href="#how-it-works" className="text-gray-400 hover:text-white transition-colors">How it Works</a></li>
-              <li><a href="#pricing" className="text-gray-400 hover:text-white transition-colors">Pricing</a></li>
-              <li><a href="#testimonials" className="text-gray-400 hover:text-white transition-colors">Testimonials</a></li>
-              <li><a href="#faq" className="text-gray-400 hover:text-white transition-colors">FAQ</a></li>
+              <li>
+                <button 
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Home
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => scrollToSection('how-it-works')}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  How it Works
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => scrollToSection('pricing')}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Pricing
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => scrollToSection('testimonials')}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Testimonials
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => scrollToSection('faq')}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  FAQ
+                </button>
+              </li>
             </ul>
           </div>
           
-          {/* Contact Information */}
           <div>
             <h3 className="text-xl font-bold mb-4">Contact Us</h3>
             <ul className="space-y-2 text-gray-400">
@@ -71,7 +107,6 @@ const Footer = () => {
             </ul>
           </div>
           
-          {/* Newsletter Signup */}
           <div>
             <h3 className="text-xl font-bold mb-4">Newsletter</h3>
             <p className="text-gray-400 mb-4">
@@ -94,7 +129,6 @@ const Footer = () => {
           </div>
         </div>
         
-        {/* Copyright */}
         <div className="border-t border-gray-800 pt-6 mt-6 text-center text-gray-400 text-sm">
           <p>© {new Date().getFullYear()} MediaBoost. All rights reserved.</p>
         </div>

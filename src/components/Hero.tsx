@@ -2,9 +2,9 @@
 import { Button } from "@/components/ui/button";
 
 const Hero = () => {
-  const scrollToPricing = () => {
-    const pricingSection = document.getElementById('pricing');
-    pricingSection?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    section?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -20,13 +20,14 @@ const Hero = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button 
-              onClick={scrollToPricing}
+              onClick={() => scrollToSection('pricing')}
               className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white text-lg px-8 py-6"
             >
               Get Started Now
             </Button>
             <Button 
               variant="outline" 
+              onClick={() => scrollToSection('media-sites')}
               className="border-[#9b87f5] text-[#9b87f5] hover:bg-[#9b87f5]/10 text-lg px-8 py-6"
             >
               View Sites

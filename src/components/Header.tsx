@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
@@ -10,17 +11,18 @@ const Header = () => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const scrollToPricing = () => {
-    const pricingSection = document.getElementById('pricing');
-    pricingSection?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    section?.scrollIntoView({ behavior: 'smooth' });
+    setIsMenuOpen(false);
   };
 
   const navLinks = [
     { name: "Home", url: "/" },
-    { name: "How it Works", url: "#how-it-works" },
-    { name: "Pricing", url: "#pricing" },
-    { name: "Testimonials", url: "#testimonials" },
-    { name: "FAQ", url: "#faq" }
+    { name: "How it Works", url: "how-it-works" },
+    { name: "Pricing", url: "pricing" },
+    { name: "Testimonials", url: "testimonials" },
+    { name: "FAQ", url: "faq" }
   ];
 
   return (
@@ -38,13 +40,13 @@ const Header = () => {
         
         <nav className="hidden md:flex items-center space-x-8">
           {navLinks.map((link) => (
-            <a 
-              key={link.name} 
-              href={link.url} 
+            <button 
+              key={link.name}
+              onClick={() => link.url === "/" ? window.scrollTo({ top: 0, behavior: 'smooth' }) : scrollToSection(link.url)}
               className="text-gray-600 hover:text-[#9b87f5] font-medium transition-colors"
             >
               {link.name}
-            </a>
+            </button>
           ))}
         </nav>
         
@@ -66,7 +68,7 @@ const Header = () => {
             </>
           ) : (
             <Button 
-              onClick={scrollToPricing}
+              onClick={() => scrollToSection('pricing')}
               className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white"
             >
               Start Here
@@ -78,14 +80,13 @@ const Header = () => {
           <div className="absolute top-16 left-0 right-0 bg-white shadow-md md:hidden p-4 z-50">
             <nav className="flex flex-col space-y-4">
               {navLinks.map((link) => (
-                <a 
-                  key={link.name} 
-                  href={link.url} 
-                  className="text-gray-600 hover:text-[#9b87f5] font-medium transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
+                <button
+                  key={link.name}
+                  onClick={() => link.url === "/" ? window.scrollTo({ top: 0, behavior: 'smooth' }) : scrollToSection(link.url)}
+                  className="text-gray-600 hover:text-[#9b87f5] font-medium transition-colors text-left"
                 >
                   {link.name}
-                </a>
+                </button>
               ))}
               {user ? (
                 <>
@@ -109,7 +110,10 @@ const Header = () => {
                 </>
               ) : (
                 <Button 
-                  onClick={scrollToPricing}
+                  onClick={() => {
+                    scrollToSection('pricing');
+                    setIsMenuOpen(false);
+                  }}
                   className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white w-full"
                 >
                   Start Here
