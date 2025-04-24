@@ -19,8 +19,17 @@ serve(async (req) => {
     const { planName } = await req.json();
     console.log('Plan selected:', planName);
 
+    // Get the Stripe secret key and verify it exists
+    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
+    if (!stripeKey) {
+      console.error('STRIPE_SECRET_KEY is not set in environment variables');
+      throw new Error('Stripe key configuration error');
+    }
+    
+    console.log('Initializing Stripe with key:', stripeKey.substring(0, 8) + '...');
+    
     // Initialize Stripe with the secret key
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
+    const stripe = new Stripe(stripeKey, {
       apiVersion: '2023-10-16',
     });
 
@@ -36,6 +45,7 @@ serve(async (req) => {
     }
 
     // Create Checkout Session
+    console.log('Creating Stripe checkout session');
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -59,21 +69,27 @@ serve(async (req) => {
     console.log('Session created:', session.id);
 
     // Create an order record in the database
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    try {
+      console.log('Creating order record in database');
+      const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      );
 
-    const { data: orderData, error: orderError } = await supabase.from('orders').insert({
-      stripe_session_id: session.id,
-      amount: prices[planName],
-      status: 'pending'
-    }).select();
+      const { data: orderData, error: orderError } = await supabase.from('orders').insert({
+        stripe_session_id: session.id,
+        amount: prices[planName],
+        status: 'pending'
+      }).select();
 
-    if (orderError) {
-      console.error('Error creating order:', orderError);
-    } else {
-      console.log('Order created:', orderData);
+      if (orderError) {
+        console.error('Error creating order:', orderError);
+      } else {
+        console.log('Order created:', orderData);
+      }
+    } catch (dbError) {
+      console.error('Database error:', dbError);
+      // Continue with checkout even if DB insert fails
     }
 
     return new Response(JSON.stringify({ url: session.url }), {
