@@ -32,10 +32,10 @@ serve(async (req) => {
 
     // Map plans to their respective Stripe price IDs
     const priceIds = {
-      'Launch Special': 'price_1RHUuo2ibKYbSeSErVK3RJqH', // Your test price ID
-      'Starter': 'price_1RHUuo2ibKYbSeSErVK3RJqH', // Using same test ID for all plans for testing
-      'Growth': 'price_1RHUuo2ibKYbSeSErVK3RJqH',
-      'Enterprise': 'price_1RHUuo2ibKYbSeSErVK3RJqH'
+      'Launch Special': 'price_0RHQkp3YTXYuny55968dG82q', // Updated price ID
+      'Starter': 'price_0RHQkp3YTXYuny55968dG82q', // Using same ID for all plans
+      'Growth': 'price_0RHQkp3YTXYuny55968dG82q',
+      'Enterprise': 'price_0RHQkp3YTXYuny55968dG82q'
     };
 
     const priceId = priceIds[planName];
