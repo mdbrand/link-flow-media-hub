@@ -18,44 +18,11 @@ const Payment = () => {
 
   // Define valid plans and their prices
   const prices = {
-    'Starter': '$297',
-    'Growth': '$497',
-    'Enterprise': '$997',
     'Launch Special': '$97'
   };
 
   // Define features for each plan
   const features = {
-    'Starter': [
-      "Featured on 5 media sites",
-      "1 article submission",
-      "Basic AI adaptation",
-      "Standard editorial review",
-      "30-day publishing window",
-      "Basic performance metrics"
-    ],
-    'Growth': [
-      "Featured on all 12 media sites",
-      "1 article submission",
-      "Advanced AI optimization",
-      "Priority editorial review",
-      "14-day publishing window",
-      "Detailed performance analytics",
-      "Social media promotion",
-      "PDF certificate of publication"
-    ],
-    'Enterprise': [
-      "Featured on all 12 media sites",
-      "3 article submissions",
-      "Premium AI customization",
-      "VIP editorial treatment",
-      "7-day publishing window",
-      "Comprehensive analytics dashboard",
-      "Social media campaign",
-      "Featured spotlight placement",
-      "Dedicated account manager",
-      "Quarterly strategy session"
-    ],
     'Launch Special': [
       "Featured on ALL 12 media sites",
       "1 article submission",
@@ -94,7 +61,7 @@ const Payment = () => {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-gray-500 mb-4">
-              Please return to pricing and select one of our available plans: Starter, Growth, Enterprise, or Launch Special.
+              Please return to pricing and select the Launch Special offer.
             </p>
           </CardContent>
           <CardFooter>
@@ -150,7 +117,7 @@ const Payment = () => {
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl">
         <CardHeader>
-          <CardTitle className="text-2xl">{planName} Plan</CardTitle>
+          <CardTitle className="text-2xl">Launch Special</CardTitle>
           <CardDescription>Review your order details before proceeding to payment</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">

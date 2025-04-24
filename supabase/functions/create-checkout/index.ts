@@ -30,24 +30,12 @@ serve(async (req) => {
       apiVersion: '2023-10-16',
     });
 
-    // Map plan names to their prices in cents
-    const planPrices = {
-      'Starter': 29700, // $297
-      'Growth': 49700,  // $497
-      'Enterprise': 99700, // $997
-      'Launch Special': 9700 // $97
-    };
+    // Simplified price for $97 launch special
+    const amount = 9700; // $97.00 in cents
 
-    // Get the price for the selected plan
-    const amount = planPrices[planName];
-    if (amount === undefined) {
-      console.error('Invalid plan name:', planName);
-      throw new Error(`Invalid plan name: ${planName}`);
-    }
+    console.log('Using fixed price for Launch Special:', amount);
     
-    console.log('Using dynamic price for plan:', planName, 'Amount:', amount);
-    
-    // Create checkout session with dynamic pricing instead of using price IDs
+    // Create checkout session with fixed pricing
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -55,8 +43,8 @@ serve(async (req) => {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: `${planName} Plan`,
-              description: 'Media coverage package',
+              name: 'Launch Special Media Coverage',
+              description: 'Featured on all 12 media sites',
             },
             unit_amount: amount,
           },
