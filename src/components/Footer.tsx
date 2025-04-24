@@ -100,17 +100,18 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-bold mb-4">Contact Us</h3>
             <ul className="space-y-2 text-gray-400">
-              <li>123 Media Avenue</li>
-              <li>San Francisco, CA 94107</li>
-              <li>Email: info@mediaboost.com</li>
-              <li>Phone: (555) 123-4567</li>
+              <li>Media Boost AI</li>
+              <li>21151 S Western Ave.</li>
+              <li>Torrance, CA 90501</li>
+              <li>Email: info@bookedimpact.com</li>
+              <li>Phone: (562) 444-5620</li>
             </ul>
           </div>
           
           <div>
             <h3 className="text-xl font-bold mb-4">Newsletter</h3>
             <p className="text-gray-400 mb-4">
-              Subscribe to our newsletter for the latest updates and insights.
+              Subscribe to get notified when we get newer websites added to the network
             </p>
             <form onSubmit={handleNewsletterSubmit} className="space-y-2">
               <div className="flex">
