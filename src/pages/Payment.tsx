@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -13,6 +13,7 @@ const Payment = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const prices = {
     'Starter': '$297',
@@ -62,6 +63,15 @@ const Payment = () => {
     ]
   };
 
+  useEffect(() => {
+    // Validate plan name when component mounts
+    if (!planName || !prices[planName]) {
+      setError('Invalid plan selected');
+    } else {
+      setError('');
+    }
+  }, [planName]);
+
   if (!planName || !prices[planName]) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
@@ -83,6 +93,7 @@ const Payment = () => {
   const handleCheckout = async () => {
     try {
       setIsLoading(true);
+      setError('');
       console.log('Initiating checkout for plan:', planName);
       
       const { data, error } = await supabase.functions.invoke('create-checkout', {
@@ -103,6 +114,7 @@ const Payment = () => {
       }
     } catch (error) {
       console.error("Purchase error:", error);
+      setError(error.message || 'Failed to process payment');
       toast({
         variant: "destructive",
         title: "Error",
@@ -138,6 +150,12 @@ const Payment = () => {
               ))}
             </ul>
           </div>
+          
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-md">
+              {error}
+            </div>
+          )}
         </CardContent>
         <CardFooter className="flex-col gap-4">
           <Button 
