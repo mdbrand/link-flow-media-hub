@@ -1,3 +1,4 @@
+
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -21,6 +23,8 @@ const formSchema = z.object({
 const Signup = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,13 +36,20 @@ const Signup = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      setIsLoading(true);
+      console.log("Attempting to sign up with:", { email: values.email });
+      
+      const { data, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Signup error:", error);
+        throw error;
+      }
 
+      console.log("Signup successful:", data);
       toast({
         title: "Account created",
         description: "Your account has been created successfully.",
@@ -46,11 +57,14 @@ const Signup = () => {
       
       navigate('/submit-article');
     } catch (error) {
+      console.error("Error details:", error);
       toast({
         variant: "destructive",
         title: "Error",
         description: error.message || "There was a problem creating your account.",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -105,8 +119,8 @@ const Signup = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
-                Create Account
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Creating Account..." : "Create Account"}
               </Button>
             </form>
           </Form>
