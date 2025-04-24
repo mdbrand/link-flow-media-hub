@@ -1,4 +1,3 @@
-
 import { Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -57,7 +56,6 @@ const ReferFriend = () => {
           </CardContent>
         </Card>
 
-        {/* PodMatch Promotion Section */}
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-purple-700 text-center">
@@ -67,7 +65,7 @@ const ReferFriend = () => {
           <CardContent className="space-y-6">
             <div className="aspect-video rounded-lg overflow-hidden">
               <img
-                src="/photo-1605810230434-7631ac76ec81"
+                src="https://images.unsplash.com/photo-1518005020951-eccb494ad742"
                 alt="Professional podcast studio setup"
                 className="w-full h-full object-cover"
               />
@@ -108,4 +106,3 @@ const ReferFriend = () => {
 };
 
 export default ReferFriend;
-
