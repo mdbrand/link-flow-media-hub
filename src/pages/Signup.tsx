@@ -1,4 +1,3 @@
-
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -8,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -32,14 +32,24 @@ const Signup = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      // Here we'll integrate Supabase auth later
-      console.log('Form submitted:', values);
+      const { error } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Account created",
+        description: "Your account has been created successfully.",
+      });
+      
       navigate('/submit-article');
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "There was a problem creating your account.",
+        description: error.message || "There was a problem creating your account.",
       });
     }
   };

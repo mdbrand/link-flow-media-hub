@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Text } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from 'react-router-dom';
+import { useArticles } from '@/hooks/useArticles';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -21,8 +23,10 @@ const SubmitArticle = () => {
   const [wordCount, setWordCount] = useState(0);
   const [images, setImages] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { toast } = useToast();
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
+  const { submitArticle, isSubmitting } = useArticles();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -32,6 +36,12 @@ const SubmitArticle = () => {
       images: []
     },
   });
+
+  // Redirect if not authenticated
+  if (!loading && !user) {
+    navigate('/signup');
+    return null;
+  }
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const content = e.target.value;
@@ -55,10 +65,11 @@ const SubmitArticle = () => {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log('Form submitted:', values);
-    toast({
-      title: "Article Submitted",
-      description: "Your article has been submitted for review.",
+    const files = fileInputRef.current?.files;
+    await submitArticle({
+      title: values.title,
+      content: values.content,
+      images: files ? Array.from(files) : [],
     });
     navigate('/refer-friend');
   };
@@ -144,8 +155,8 @@ const SubmitArticle = () => {
                 />
               </div>
 
-              <Button type="submit" className="w-full">
-                Submit Article
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? "Submitting..." : "Submit Article"}
               </Button>
             </form>
           </Form>
