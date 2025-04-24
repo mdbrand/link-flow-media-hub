@@ -2,6 +2,8 @@
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const pricingPlans = [
   {
@@ -55,6 +57,27 @@ const pricingPlans = [
 ];
 
 const PricingSection = () => {
+  const { toast } = useToast();
+
+  const handlePurchase = async (planName: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { planName },
+      });
+
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "There was a problem initiating the checkout. Please try again.",
+      });
+    }
+  };
+
   return (
     <section id="pricing" className="py-16 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
@@ -96,6 +119,7 @@ const PricingSection = () => {
               </CardContent>
               <CardFooter className="pt-4">
                 <Button 
+                  onClick={() => handlePurchase(plan.name)}
                   className={`w-full ${plan.recommended ? 'bg-[#9b87f5] hover:bg-[#8B5CF6]' : 'bg-gray-800 hover:bg-gray-700'}`}
                 >
                   Get Started
