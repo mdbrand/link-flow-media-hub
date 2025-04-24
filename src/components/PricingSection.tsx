@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Check, CreditCard, Sparkles } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -59,7 +58,7 @@ const PricingSection = () => {
   const navigate = useNavigate();
 
   const handlePurchase = (planName: string, isSpecialOffer: boolean = false) => {
-    navigate(`/payment?plan=${planName}${isSpecialOffer ? '&special=true' : ''}`);
+    navigate(`/payment?plan=Launch Special&special=true`);
   };
 
   return (
