@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 const PaymentSuccess = () => {
   const { toast } = useToast();
@@ -15,10 +15,15 @@ const PaymentSuccess = () => {
     if (sessionId) {
       toast({
         title: "Payment Successful!",
-        description: "Thank you for your purchase. We'll start working on your media coverage right away.",
+        description: "Thank you for your purchase. Let's create your account to get started.",
       });
+      // Redirect to signup after a short delay
+      const timer = setTimeout(() => {
+        navigate('/signup');
+      }, 2000);
+      return () => clearTimeout(timer);
     }
-  }, [sessionId, toast]);
+  }, [sessionId, toast, navigate]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
@@ -28,10 +33,10 @@ const PaymentSuccess = () => {
         </div>
         <h1 className="text-3xl font-bold">Payment Successful!</h1>
         <p className="text-gray-600">
-          Thank you for your purchase. We'll start working on your media coverage package right away.
+          Thank you for your purchase. You'll be redirected to create your account in a moment.
         </p>
-        <Button onClick={() => navigate('/')} className="w-full">
-          Return to Home
+        <Button onClick={() => navigate('/signup')} className="w-full">
+          Create Account Now
         </Button>
       </div>
     </div>
