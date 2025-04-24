@@ -65,9 +65,9 @@ const Signup = () => {
       setSignupError(null);
       console.log("Attempting to sign up with:", { email: values.email });
       
-      // Get the absolute URL for the auth callback page
+      // Get origin for redirect (the root path handles the code)
       const origin = window.location.origin;
-      const redirectUrl = `${origin}/auth-callback`;
+      const redirectUrl = origin; // No path, just the origin
       console.log("Using redirect URL:", redirectUrl);
       
       const { data, error } = await supabase.auth.signUp({
