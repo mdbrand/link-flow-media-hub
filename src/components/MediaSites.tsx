@@ -6,84 +6,84 @@ import { Globe } from "lucide-react";
 const mediaSites = [
   {
     name: "The LA Note",
-    logo: "https://via.placeholder.com/100x50?text=LANote",
+    cover: "https://images.unsplash.com/photo-1533488765986-dfa2a9939acd?w=800&auto=format&fit=crop&q=60",
     description: "Entertainment media platform with high domain authority and extensive reach.",
     type: "Entertainment",
     rating: 39
   },
   {
     name: "Thought Leaders Ethos",
-    logo: "https://via.placeholder.com/100x50?text=TLE",
+    cover: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&auto=format&fit=crop&q=60",
     description: "Premier platform for entrepreneurial thought leadership and business insights.",
     type: "Entrepreneurial",
     rating: 18
   },
   {
     name: "MDBRAND",
-    logo: "https://via.placeholder.com/100x50?text=MDBRAND",
+    cover: "https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?w=800&auto=format&fit=crop&q=60",
     description: "Leading digital marketing publication focused on brand development strategies.",
     type: "Digital Marketing",
     rating: 17
   },
   {
     name: "Booked Impact",
-    logo: "https://via.placeholder.com/100x50?text=BookedImpact",
+    cover: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&auto=format&fit=crop&q=60",
     description: "Platform dedicated to entrepreneurial success stories and business growth.",
     type: "Entrepreneurial",
     rating: 12
   },
   {
     name: "Seismic Sports",
-    logo: "https://via.placeholder.com/100x50?text=SeismicSports",
+    cover: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&auto=format&fit=crop&q=60",
     description: "Comprehensive sports coverage and analysis platform.",
     type: "Sports",
     rating: 11
   },
   {
     name: "New York Post Daily",
-    logo: "https://via.placeholder.com/100x50?text=NYPostDaily",
+    cover: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800&auto=format&fit=crop&q=60",
     description: "Entertainment and lifestyle news coverage with broad audience reach.",
     type: "Entertainment",
     rating: 10
   },
   {
     name: "Authentic Sacrifice",
-    logo: "https://via.placeholder.com/100x50?text=AuthenticSacrifice",
+    cover: "https://images.unsplash.com/photo-1520187044487-b2efb58f0cba?w=800&auto=format&fit=crop&q=60",
     description: "Faith-based platform exploring religious and spiritual topics.",
     type: "Religious",
     rating: 9
   },
   {
     name: "Authority Maximizer",
-    logo: "https://via.placeholder.com/100x50?text=AuthorityMax",
+    cover: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&auto=format&fit=crop&q=60",
     description: "Resource for entrepreneurs looking to build authority in their niche.",
     type: "Entrepreneurial",
     rating: 9
   },
   {
     name: "Live Love Hobby",
-    logo: "https://via.placeholder.com/100x50?text=LiveLoveHobby",
+    cover: "https://images.unsplash.com/photo-1472289065668-ce650ac443d2?w=800&auto=format&fit=crop&q=60",
     description: "Platform celebrating hobbies and recreational pursuits.",
     type: "Hobby",
     rating: 9
   },
   {
     name: "MDB Consultancy",
-    logo: "https://via.placeholder.com/100x50?text=MDBConsultancy",
+    cover: "https://images.unsplash.com/photo-1552581234-26160f608093?w=800&auto=format&fit=crop&q=60",
     description: "Professional business consultancy insights and expertise.",
     type: "Business Consultancy",
     rating: 9
   },
   {
     name: "Trending Consumerism",
-    logo: "https://via.placeholder.com/100x50?text=TrendingConsumer",
+    cover: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800&auto=format&fit=crop&q=60",
     description: "Latest trends and insights in consumer behavior and markets.",
     type: "Consumer",
     rating: 5
   },
   {
     name: "HKlub Fitness",
-    logo: "https://via.placeholder.com/100x50?text=HKlubFitness",
+    cover: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&auto=format&fit=crop&q=60",
     description: "Health and fitness focused content for wellness enthusiasts.",
     type: "Fitness",
     rating: 3
@@ -105,8 +105,14 @@ const MediaSites = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {mediaSites.map((site) => (
             <Card key={site.name} className="h-full hover:shadow-lg transition-shadow">
-              <CardHeader className="flex items-center justify-center pb-2">
-                <img src={site.logo} alt={`${site.name} logo`} className="h-12 object-contain" />
+              <CardHeader className="pb-2">
+                <div className="w-full h-40 relative rounded-t-lg overflow-hidden">
+                  <img 
+                    src={site.cover} 
+                    alt={`${site.name} cover`} 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               </CardHeader>
               <CardContent>
                 <CardTitle className="text-xl mb-2 text-center">{site.name}</CardTitle>
