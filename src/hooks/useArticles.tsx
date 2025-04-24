@@ -2,6 +2,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 interface ArticleInput {
   title: string;
@@ -12,11 +13,14 @@ interface ArticleInput {
 export function useArticles() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const submitArticle = async ({ title, content, images = [] }: ArticleInput) => {
+    if (!user) throw new Error("User must be authenticated to submit an article");
+    
     const { data: article, error: articleError } = await supabase
       .from('articles')
-      .insert([{ title, content }])
+      .insert({ title, content, user_id: user.id })
       .select()
       .single();
 
