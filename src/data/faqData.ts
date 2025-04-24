@@ -17,10 +17,6 @@ export const faqs = [
     answer: "Yes, you retain the intellectual property rights to your core content. However, the adapted versions published on our partner sites will typically belong to those publications, as is standard in media publishing."
   },
   {
-    question: "Can I choose which media sites my content is published on?",
-    answer: "With our Growth and Enterprise packages, you can provide preferences for which sites you'd like to prioritize. While we can't guarantee specific placements as it depends on editorial acceptance, we do our best to accommodate your preferences."
-  },
-  {
     question: "What types of content can I submit?",
     answer: "We accept thought leadership articles, industry analyses, how-to guides, and opinion pieces. Content should be informative and valuable to readers rather than overtly promotional. Our team can help guide you on creating appropriate content during onboarding."
   }
