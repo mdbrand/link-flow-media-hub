@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Check, CreditCard, Sparkles } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -63,6 +64,13 @@ const PricingSection = () => {
   return (
     <section id="pricing" className="py-16 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Regular <span className="text-[#9b87f5]">Media Coverage</span> Packages</h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Select the package that best fits your needs and budget. All packages include our proprietary AI-powered content adaptation.
+          </p>
+        </div>
+        
         {/* Special Launch Offer Banner */}
         <div className="mb-12 transform hover:scale-105 transition-transform">
           <div className="bg-gradient-to-r from-[#8B5CF6] to-[#D946EF] rounded-lg p-6 shadow-lg border border-purple-300">
@@ -87,13 +95,6 @@ const PricingSection = () => {
           </div>
         </div>
 
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Regular <span className="text-[#9b87f5]">Media Coverage</span> Packages</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Select the package that best fits your needs and budget. All packages include our proprietary AI-powered content adaptation.
-          </p>
-        </div>
-        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
           {pricingPlans.map((plan) => (
             <Card 

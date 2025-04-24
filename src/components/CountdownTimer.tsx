@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Timer } from 'lucide-react';
 
-const targetDate = new Date('2025-08-28T23:59:59');
+const targetDate = new Date('2025-05-15T23:59:59');
 
 const CountdownTimer = () => {
   const [timeLeft, setTimeLeft] = useState({
@@ -41,7 +41,7 @@ const CountdownTimer = () => {
           <h2 className="text-2xl md:text-3xl font-bold">Limited Time Offer</h2>
         </div>
         <p className="text-lg text-gray-600 mb-8">
-          Don't miss out! This special deal expires on August 28, 2025
+          Don't miss out! This special deal expires on May 15, 2025
         </p>
         
         <Card className="inline-flex gap-6 md:gap-12 p-6 bg-white shadow-lg">
