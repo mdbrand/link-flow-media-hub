@@ -17,7 +17,8 @@ const Payment = () => {
   const prices = {
     'Starter': '$297',
     'Growth': '$497',
-    'Enterprise': '$997'
+    'Enterprise': '$997',
+    'Launch Special': '$97'
   };
 
   const features = {
@@ -50,6 +51,14 @@ const Payment = () => {
       "Featured spotlight placement",
       "Dedicated account manager",
       "Quarterly strategy session"
+    ],
+    'Launch Special': [
+      "Featured on ALL 12 media sites",
+      "1 article submission",
+      "Advanced AI adaptation",
+      "Priority editorial review",
+      "14-day publishing window",
+      "Special launch pricing"
     ]
   };
 

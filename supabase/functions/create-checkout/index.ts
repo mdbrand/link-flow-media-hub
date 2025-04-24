@@ -36,7 +36,8 @@ serve(async (req) => {
     const prices = {
       'Starter': 29700,  // $297.00
       'Growth': 49700,   // $497.00
-      'Enterprise': 99700 // $997.00
+      'Enterprise': 99700, // $997.00
+      'Launch Special': 9700 // $97.00
     };
 
     if (!prices[planName]) {
