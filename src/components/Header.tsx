@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
@@ -26,14 +25,12 @@ const Header = () => {
           <Link to="/" className="text-2xl font-bold text-[#9b87f5]">MediaBoost</Link>
         </div>
         
-        {/* Mobile menu button */}
         <div className="md:hidden">
           <Button variant="ghost" size="icon" onClick={toggleMenu} aria-label="Toggle menu">
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </Button>
         </div>
         
-        {/* Desktop navigation */}
         <nav className="hidden md:flex items-center space-x-8">
           {navLinks.map((link) => (
             <a 
@@ -65,13 +62,12 @@ const Header = () => {
           ) : (
             <Link to="/signup">
               <Button className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white">
-                Get Started Now
+                Start
               </Button>
             </Link>
           )}
         </div>
         
-        {/* Mobile menu */}
         {isMenuOpen && (
           <div className="absolute top-16 left-0 right-0 bg-white shadow-md md:hidden p-4 z-50">
             <nav className="flex flex-col space-y-4">
@@ -111,7 +107,7 @@ const Header = () => {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <Button className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white w-full">
-                    Get Started Now
+                    Start
                   </Button>
                 </Link>
               )}
