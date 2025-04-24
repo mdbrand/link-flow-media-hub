@@ -6,7 +6,7 @@ import ProcessSection from "../components/ProcessSection";
 import CtaBanner from "../components/CtaBanner";
 import PricingSection from "../components/PricingSection";
 import TestimonialsSection from "../components/TestimonialsSection";
-import FaqSection from "../components/FaqSection";
+import FaqSectionEditable from "../components/FaqSectionEditable";
 import Footer from "../components/Footer";
 
 const Index = () => {
@@ -20,7 +20,7 @@ const Index = () => {
         <CtaBanner />
         <PricingSection />
         <TestimonialsSection />
-        <FaqSection />
+        <FaqSectionEditable />
       </main>
       <Footer />
     </div>
