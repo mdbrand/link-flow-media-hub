@@ -3,9 +3,20 @@ import { Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 
 const ReferFriend = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // Show success toast when component mounts
+    toast({
+      title: "Article Submitted Successfully",
+      description: "Your article is being processed. You'll receive an email with the AI-generated versions soon.",
+    });
+  }, [toast]);
 
   return (
     <div className="min-h-screen p-4 bg-gradient-to-b from-purple-50 to-white">
