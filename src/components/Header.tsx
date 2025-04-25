@@ -68,7 +68,7 @@ const Header = () => {
             </>
           ) : (
             <>
-              <Link to="/signup">
+              <Link to="/signin">
                 <Button variant="ghost" className="text-gray-600 hover:text-[#9b87f5]">
                   <LogIn className="mr-2 h-4 w-4" />
                   Sign In
@@ -119,7 +119,7 @@ const Header = () => {
               ) : (
                 <>
                   <Link 
-                    to="/signup"
+                    to="/signin"
                     className="text-gray-600 hover:text-[#9b87f5] font-medium transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >

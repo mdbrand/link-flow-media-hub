@@ -8,7 +8,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Payment from "./pages/Payment";
-import Signup from "./pages/Signup";
+import SignIn from "./pages/SignIn";
 import SubmitArticle from "./pages/SubmitArticle";
 import ReferFriend from "./pages/ReferFriend";
 import AuthCallback from "./pages/AuthCallback";
@@ -28,7 +28,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
-            <Route path="/signup" element={<Signup />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<Navigate to="/signin" replace />} />
             <Route path="/submit-article" element={<SubmitArticle />} />
             <Route path="/refer-friend" element={<ReferFriend />} />
             <Route path="/auth-callback" element={<AuthCallback />} />

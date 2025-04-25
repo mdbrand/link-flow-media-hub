@@ -18,17 +18,13 @@ import Header from "@/components/Header";
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
 });
 
-const Signup = () => {
+const SignIn = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [signupError, setSignupError] = useState<string | null>(null);
+  const [signInError, setSignInError] = useState<string | null>(null);
   const { user, loading } = useAuth();
   
   const form = useForm<z.infer<typeof formSchema>>({
@@ -36,19 +32,16 @@ const Signup = () => {
     defaultValues: {
       email: "",
       password: "",
-      confirmPassword: "",
     },
   });
 
-  // If already authenticated, redirect to submit article
   useEffect(() => {
     if (user && !loading) {
-      console.log("Signup: User already authenticated, redirecting to submit-article");
-      navigate('/submit-article');
+      console.log("SignIn: User already authenticated, redirecting to submissions");
+      navigate('/submissions');
     }
   }, [user, loading, navigate]);
 
-  // If still loading auth state, show loading indicator
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -63,55 +56,37 @@ const Signup = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
-      setSignupError(null);
-      console.log("Signup: Attempting to sign up with:", { email: values.email });
+      setSignInError(null);
+      console.log("SignIn: Attempting to sign in with:", { email: values.email });
       
-      // Get the current origin and path for the redirect
-      const origin = window.location.origin;
-      const redirectTo = `${origin}/auth-callback`;
-      
-      console.log("Signup: Using redirect URL:", redirectTo);
-      
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
-        options: {
-          emailRedirectTo: redirectTo
-        }
       });
 
-      console.log("Signup: Response received:", { data, error });
+      console.log("SignIn: Response received:", { data, error });
 
       if (error) {
-        console.error("Signup: Error during signup:", error);
+        console.error("SignIn: Error during sign in:", error);
         throw error;
       }
       
-      // If we have a session, the user can be immediately signed in
       if (data?.session) {
-        console.log("Signup: Session available, user can be immediately signed in");
+        console.log("SignIn: Session available, user signed in");
         toast({
-          title: "Account created",
-          description: "Your account has been created successfully.",
+          title: "Welcome back!",
+          description: "You've been successfully signed in.",
         });
         
-        // Redirect to submit article page
-        navigate('/submit-article');
-      } else {
-        // If email confirmation is required
-        console.log("Signup: Email confirmation required");
-        toast({
-          title: "Verification email sent",
-          description: "Please check your email to confirm your account before submitting articles.",
-        });
+        navigate('/submissions');
       }
     } catch (error) {
-      console.error("Signup: Detailed error:", error);
-      setSignupError(error.message || "There was a problem creating your account.");
+      console.error("SignIn: Detailed error:", error);
+      setSignInError("Invalid email or password. Please try again.");
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "There was a problem creating your account.",
+        description: "Invalid email or password. Please try again.",
       });
     } finally {
       setIsLoading(false);
@@ -124,16 +99,16 @@ const Signup = () => {
       <div className="flex-1 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>Create Your Account</CardTitle>
+            <CardTitle>Sign In to Your Account</CardTitle>
             <CardDescription>
-              Sign up to submit your article for publication
+              Access your article submissions and track their status
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {signupError && (
+            {signInError && (
               <Alert variant="destructive" className="mb-6">
                 <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{signupError}</AlertDescription>
+                <AlertDescription>{signInError}</AlertDescription>
               </Alert>
             )}
             <Form {...form}>
@@ -164,21 +139,8 @@ const Signup = () => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="confirmPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Confirm Password</FormLabel>
-                      <FormControl>
-                        <Input type="password" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Creating Account..." : "Create Account"}
+                  {isLoading ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
             </Form>
@@ -189,4 +151,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default SignIn;
