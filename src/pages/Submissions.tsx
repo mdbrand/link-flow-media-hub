@@ -7,9 +7,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import { LogOut } from 'lucide-react';
 
 const Submissions = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -46,6 +47,11 @@ const Submissions = () => {
     fetchSubmissions();
   }, [user, navigate, toast]);
 
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+
   if (loading) {
     return (
       <div className="container max-w-5xl mx-auto py-8 px-4">
@@ -63,17 +69,19 @@ const Submissions = () => {
     <div className="container max-w-5xl mx-auto py-8 px-4">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">My Submissions</h1>
-        <Button onClick={() => navigate('/submit-article')} className="bg-[#9b87f5] hover:bg-[#8B5CF6]">
-          New Submission
+        <Button 
+          onClick={handleSignOut} 
+          variant="outline"
+          className="border-red-500 text-red-500 hover:bg-red-50"
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          Sign Out
         </Button>
       </div>
 
       {submissions.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-600 mb-4">You haven't submitted any articles yet.</p>
-          <Button onClick={() => navigate('/submit-article')} className="bg-[#9b87f5] hover:bg-[#8B5CF6]">
-            Submit Your First Article
-          </Button>
         </div>
       ) : (
         <Table>
@@ -113,3 +121,4 @@ const Submissions = () => {
 };
 
 export default Submissions;
+
