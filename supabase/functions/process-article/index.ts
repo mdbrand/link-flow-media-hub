@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { Client } from "npm:@notionhq/client"
 import OpenAI from "https://esm.sh/openai@4.20.1"
@@ -121,7 +120,7 @@ serve(async (req) => {
   try {
     const { title, content, selectedSites, userEmail } = await req.json()
     
-    console.log("Starting article processing for sites:", selectedSites)
+    console.log("Starting article processing with email:", userEmail);
     
     let generatedContents = [];
     let articleVersions = [];
@@ -155,88 +154,52 @@ serve(async (req) => {
       // We'll continue to send emails even if there was an error
     }
 
-    console.log("Sending email notifications...");
-
+    console.log("Sending confirmation email to:", userEmail);
+    
     try {
-      // Send email to user
-      const userEmailResult = await resend.emails.send({
+      // Send confirmation email to user
+      const emailResult = await resend.emails.send({
         from: 'Article Generator <onboarding@resend.dev>',
         to: userEmail,
-        subject: `Your Article Submission - ${title}`,
+        subject: `Your Article - ${title} Has Been Submitted`,
         html: `
           <h1>Thank You for Your Article Submission</h1>
-          <p>We've received your article titled "${title}" and it's being processed.</p>
+          <p>We've received your article titled "${title}" and it's being processed for the following sites:</p>
+          <ul>
+            ${selectedSites.map(site => `<li>${site}</li>`).join('')}
+          </ul>
           ${articleVersions.length > 0 ? `
-            <p>Here are links to your article versions:</p>
+            <p>Your article versions are ready! Here are the links:</p>
             <ul>
               ${articleVersions.map(v => `
                 <li><strong>${v.site}</strong>: <a href="${v.url}">View Article</a></li>
               `).join('')}
             </ul>
           ` : `
-            <p>We're currently processing your article for the selected sites. You'll receive another email once the processing is complete.</p>
+            <p>Your article is currently being processed. You'll receive another email once the processing is complete.</p>
           `}
         `
       });
 
-      console.log("User email sent:", userEmailResult);
-
-      // Send email to admin
-      const adminEmailResult = await resend.emails.send({
-        from: 'Article Generator <onboarding@resend.dev>',
-        to: 'admin@lovable.ai', // Replace with your admin email
-        subject: `New Article Submission - ${title}`,
-        html: `
-          <h1>New Article Submission</h1>
-          <p><strong>Title:</strong> ${title}</p>
-          <p><strong>From:</strong> ${userEmail}</p>
-          <p><strong>Selected Sites:</strong> ${selectedSites.join(', ')}</p>
-          <hr>
-          <h2>Article Content Preview:</h2>
-          <p>${content.substring(0, 300)}...</p>
-        `
-      });
-
-      console.log("Admin email sent:", adminEmailResult);
+      console.log("Confirmation email sent successfully:", emailResult);
     } catch (emailError) {
-      console.error("Error sending emails:", emailError);
+      console.error("Error sending confirmation email:", emailError);
+      // Don't throw here - we want to return the article data even if email fails
     }
 
     return new Response(
       JSON.stringify({ 
         success: true, 
         versions: articleVersions,
-        message: "Article submitted successfully. Email notifications have been sent." 
+        message: "Article submitted successfully. Check your email for confirmation." 
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
-    console.error('Error processing article:', error)
-    
-    // Try to send error notification
-    try {
-      const { title, userEmail } = await req.json();
-      await resend.emails.send({
-        from: 'Article Generator <onboarding@resend.dev>',
-        to: userEmail,
-        subject: `Issue with your article submission - ${title}`,
-        html: `
-          <h1>We encountered an issue with your submission</h1>
-          <p>There was a technical problem processing your article "${title}".</p>
-          <p>Our team has been notified and will look into this as soon as possible.</p>
-          <p>Please try again later or contact support if the issue persists.</p>
-        `
-      });
-    } catch (emailError) {
-      console.error('Error sending error notification:', emailError);
-    }
-    
+    console.error('Error processing article:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      { 
-        status: 500, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      }
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 })
