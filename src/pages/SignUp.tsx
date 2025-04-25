@@ -70,7 +70,32 @@ const SignUp = () => {
 
       if (error) {
         console.error("SignUp: Error during sign up:", error);
-        throw error;
+        
+        // Handle the specific email error case
+        if (error.message?.includes("sending confirmation email")) {
+          // Account was likely created but confirmation email failed
+          toast({
+            title: "Account created!",
+            description: "Your account was created, but we couldn't send a confirmation email. You can still proceed to use the application.",
+          });
+          
+          // Attempt to sign in the user directly
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: values.email,
+            password: values.password,
+          });
+          
+          if (!signInError) {
+            navigate('/submissions');
+            return;
+          } else {
+            // If sign-in fails, show a more detailed message
+            setSignUpError("Your account was created but we couldn't sign you in automatically. Please try signing in manually.");
+          }
+        } else {
+          // Handle other errors
+          throw error;
+        }
       }
       
       if (data?.user) {
@@ -190,4 +215,3 @@ const SignUp = () => {
 };
 
 export default SignUp;
-
