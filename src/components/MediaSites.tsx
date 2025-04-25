@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Globe } from "lucide-react";
@@ -97,7 +96,7 @@ const MediaSites = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Stop Getting Ignored by Publications and Build Instant Credibility</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Publish On Your Schedule And Get Strategic Media Placements When You Need Them Most
+            Publish On Your Schedule And Get Strategic Media Placements When You Need Them Most Without The Heavy Agency Fees And Endless Back And Forth Emails
           </p>
         </div>
         
@@ -139,4 +138,3 @@ const MediaSites = () => {
 };
 
 export default MediaSites;
-
