@@ -38,10 +38,57 @@ const SignIn = () => {
 
   useEffect(() => {
     if (user && !loading) {
-      console.log("SignIn: User already authenticated, redirecting to submissions");
+      console.log("SignIn: User already authenticated, checking for pending orders");
+      
+      // Check for pending orders to associate with the user
+      const pendingOrderSessionId = localStorage.getItem('pendingOrderSessionId');
+      if (pendingOrderSessionId) {
+        console.log("SignIn: Found pending order, associating with user");
+        
+        const associateOrder = async () => {
+          try {
+            // Find the order with this session ID
+            const { data: order, error: fetchError } = await supabase
+              .from('orders')
+              .select('id, status')
+              .eq('stripe_session_id', pendingOrderSessionId)
+              .single();
+              
+            if (fetchError || !order) {
+              console.error("Error finding pending order:", fetchError);
+              return;
+            }
+            
+            // Update the order with the user's ID and status if not already paid
+            const { error: updateError } = await supabase
+              .from('orders')
+              .update({ 
+                user_id: user.id,
+                status: order.status !== 'paid' ? 'paid' : order.status 
+              })
+              .eq('id', order.id);
+              
+            if (updateError) {
+              console.error("Error associating order with user:", updateError);
+            } else {
+              console.log("Successfully associated order with user");
+              toast({
+                title: "Order Associated",
+                description: "Your previous purchase has been connected to your account.",
+              });
+              // Clear the pending order from localStorage
+              localStorage.removeItem('pendingOrderSessionId');
+            }
+          } catch (err) {
+            console.error("Error in associateOrder:", err);
+          }
+        };
+        
+        associateOrder();
+      }
       navigate('/submissions');
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, toast]);
 
   const handleForgotPassword = async () => {
     const email = form.getValues("email");

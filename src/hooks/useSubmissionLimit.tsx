@@ -11,6 +11,7 @@ interface SubmissionLimitResult {
   totalPaid: number;
   totalSubmitted: number;
   error: string | null;
+  refreshSubmissionStatus: () => Promise<void>;
 }
 
 export function useSubmissionLimit(): SubmissionLimitResult {
@@ -22,71 +23,71 @@ export function useSubmissionLimit(): SubmissionLimitResult {
   const [totalPaid, setTotalPaid] = useState(0);
   const [totalSubmitted, setTotalSubmitted] = useState(0);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function checkSubmissionLimit() {
-      if (!user) {
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        setIsLoading(true);
-        setError(null);
-        
-        console.log("Checking submission limit for user:", user.id);
-        
-        // Get total paid orders
-        const { data: orders, error: orderError } = await supabase
-          .from('orders')
-          .select('id')
-          .eq('user_id', user.id)
-          .eq('status', 'paid');
-        
-        if (orderError) {
-          console.error("Error fetching orders:", orderError);
-          throw orderError;
-        }
-        
-        const paidOrderCount = orders?.length || 0;
-        console.log(`Found ${paidOrderCount} paid orders`);
-        setTotalPaid(paidOrderCount);
-        
-        // Get total submitted articles
-        const { data: articles, error: articleError } = await supabase
-          .from('articles')
-          .select('id')
-          .eq('user_id', user.id);
-          
-        if (articleError) {
-          console.error("Error fetching articles:", articleError);
-          throw articleError;
-        }
-        
-        const articleCount = articles?.length || 0;
-        console.log(`Found ${articleCount} submitted articles`);
-        setTotalSubmitted(articleCount);
-        
-        // Calculate remaining submissions
-        const remaining = Math.max(0, paidOrderCount - articleCount);
-        console.log(`User has ${remaining} remaining submissions`);
-        setRemainingSubmissions(remaining);
-        setCanSubmit(remaining > 0);
-        
-        if (remaining === 0 && paidOrderCount > 0) {
-          toast({
-            description: "You've used all your available article submissions. Purchase more to continue.",
-            variant: "default",
-          });
-        }
-      } catch (err: any) {
-        console.error('Error checking submission limit:', err);
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
+  
+  const checkSubmissionLimit = async () => {
+    if (!user) {
+      setIsLoading(false);
+      return;
     }
-    
+
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      console.log("Checking submission limit for user:", user.id);
+      
+      // Get total paid orders
+      const { data: orders, error: orderError } = await supabase
+        .from('orders')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('status', 'paid');
+      
+      if (orderError) {
+        console.error("Error fetching orders:", orderError);
+        throw orderError;
+      }
+      
+      const paidOrderCount = orders?.length || 0;
+      console.log(`Found ${paidOrderCount} paid orders`);
+      setTotalPaid(paidOrderCount);
+      
+      // Get total submitted articles
+      const { data: articles, error: articleError } = await supabase
+        .from('articles')
+        .select('id')
+        .eq('user_id', user.id);
+        
+      if (articleError) {
+        console.error("Error fetching articles:", articleError);
+        throw articleError;
+      }
+      
+      const articleCount = articles?.length || 0;
+      console.log(`Found ${articleCount} submitted articles`);
+      setTotalSubmitted(articleCount);
+      
+      // Calculate remaining submissions
+      const remaining = Math.max(0, paidOrderCount - articleCount);
+      console.log(`User has ${remaining} remaining submissions`);
+      setRemainingSubmissions(remaining);
+      setCanSubmit(remaining > 0);
+      
+      if (remaining === 0 && paidOrderCount > 0) {
+        toast({
+          description: "You've used all your available article submissions. Purchase more to continue.",
+          variant: "default",
+        });
+      }
+    } catch (err: any) {
+      console.error('Error checking submission limit:', err);
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  useEffect(() => {
     checkSubmissionLimit();
   }, [user, toast]);
 
@@ -96,6 +97,7 @@ export function useSubmissionLimit(): SubmissionLimitResult {
     remainingSubmissions,
     totalPaid,
     totalSubmitted,
-    error
+    error,
+    refreshSubmissionStatus: checkSubmissionLimit
   };
 }

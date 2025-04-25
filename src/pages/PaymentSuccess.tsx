@@ -31,7 +31,7 @@ const PaymentSuccess = () => {
         // Get order details from Supabase
         const { data, error } = await supabase
           .from('orders')
-          .select('plan_name, id, status')
+          .select('plan_name, id, status, user_id')
           .eq('stripe_session_id', sessionId)
           .single();
 
@@ -68,9 +68,23 @@ const PaymentSuccess = () => {
               return;
             }
           } else {
-            console.log("User not logged in - cannot associate order");
+            console.log("User not logged in - storing session ID in localStorage");
+            // Store the session ID in localStorage for later association
+            localStorage.setItem('pendingOrderSessionId', sessionId);
           }
         } else {
+          // If order is already paid but not associated with user, associate it
+          if (user && !data.user_id) {
+            console.log("Order already marked as paid, associating with user");
+            const { error: updateError } = await supabase
+              .from('orders')
+              .update({ user_id: user.id })
+              .eq('id', data.id);
+            
+            if (updateError) {
+              console.error('Error associating order with user:', updateError);
+            }
+          }
           console.log("Order already marked as paid");
         }
 
