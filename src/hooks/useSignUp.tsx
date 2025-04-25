@@ -133,7 +133,7 @@ export const useSignUp = () => {
           navigate('/submissions');
         } else {
           toast({
-            variant: "warning",
+            variant: "default", // Changed from "warning" to "default" to fix the type error
             title: "Account created",
             description: "Your account was created, but you need to sign in manually.",
           });
