@@ -64,26 +64,26 @@ export const SubmissionLimitMessage = ({ totalPaid }: SubmissionLimitMessageProp
             </Alert>
             <p className="text-gray-600">To submit more articles, you'll need to make another purchase.</p>
             
-            <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-md">
-              <h3 className="font-medium text-amber-800 mb-2">Did you just make a purchase?</h3>
-              <p className="text-sm text-amber-700 mb-3">
+            <div className="mt-6 bg-amber-50 border border-amber-200 rounded-md p-6">
+              <h3 className="font-medium text-amber-800 mb-3 text-lg">Recently Made a Purchase?</h3>
+              <p className="text-amber-700 mb-4">
                 If you recently made a payment and are still seeing this message, click the button below to refresh your submission status.
               </p>
               <Button 
                 variant="default" 
                 size="lg" 
-                className="w-full"
+                className="w-full bg-amber-600 hover:bg-amber-700"
                 onClick={handleRefresh}
                 disabled={isRefreshing}
               >
                 {isRefreshing ? (
                   <>
-                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                    Refreshing...
+                    <RefreshCw className="h-5 w-5 mr-2 animate-spin" />
+                    Refreshing Submission Status...
                   </>
                 ) : (
                   <>
-                    <RefreshCw className="h-4 w-4 mr-2" />
+                    <RefreshCw className="h-5 w-5 mr-2" />
                     Refresh Submission Status
                   </>
                 )}

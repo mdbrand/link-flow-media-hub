@@ -82,11 +82,15 @@ serve(async (req) => {
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
       );
 
+      // Get the price details
+      const priceDetails = await stripe.prices.retrieve(priceId);
+      const amount = priceDetails.unit_amount || 2900; // Default to $29 if not found
+
       const orderData = {
         stripe_session_id: session.id,
         status: 'pending',
         plan_name: planName,
-        amount: 2900 // $29.00 in cents
+        amount: amount
       };
       
       if (userId) {

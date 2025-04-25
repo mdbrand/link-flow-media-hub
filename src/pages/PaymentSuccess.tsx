@@ -140,7 +140,7 @@ const PaymentSuccess = () => {
         } else {
           navigate('/signup');
         }
-      }, 3000);
+      }, 5000); // Extend timeout to 5 seconds to ensure order processing completes
       return () => clearTimeout(timer);
     } else {
       setIsProcessing(false);

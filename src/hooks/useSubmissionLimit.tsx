@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -24,7 +24,7 @@ export function useSubmissionLimit(): SubmissionLimitResult {
   const [totalSubmitted, setTotalSubmitted] = useState(0);
   const [error, setError] = useState<string | null>(null);
   
-  const checkSubmissionLimit = async () => {
+  const checkSubmissionLimit = useCallback(async () => {
     if (!user) {
       setIsLoading(false);
       setCanSubmit(false);
@@ -38,8 +38,8 @@ export function useSubmissionLimit(): SubmissionLimitResult {
       
       console.log("Checking submission limit for user:", user.id);
       
-      // Get total paid orders - including both 'paid' status and orders without status (legacy support)
-      const { data: orders, error: orderError } = await supabase
+      // Get total paid orders with 'paid' status
+      const { data: paidOrders, error: orderError } = await supabase
         .from('orders')
         .select('id')
         .eq('user_id', user.id)
@@ -50,20 +50,9 @@ export function useSubmissionLimit(): SubmissionLimitResult {
         throw orderError;
       }
       
-      // Get any pending orders that might need to be counted
-      const { data: pendingOrders, error: pendingError } = await supabase
-        .from('orders')
-        .select('id, stripe_session_id')
-        .eq('user_id', user.id)
-        .eq('status', 'pending');
-      
-      if (pendingError) {
-        console.error("Error fetching pending orders:", pendingError);
-      }
-      
-      const paidOrderCount = (orders?.length || 0);
+      // Log retrieved orders for debugging
+      const paidOrderCount = paidOrders?.length || 0;
       console.log(`Found ${paidOrderCount} paid orders for user ${user.id}`);
-      console.log(`Found ${pendingOrders?.length || 0} pending orders for user ${user.id}`);
       
       setTotalPaid(paidOrderCount);
       
@@ -100,11 +89,11 @@ export function useSubmissionLimit(): SubmissionLimitResult {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user, toast]);
   
   useEffect(() => {
     checkSubmissionLimit();
-  }, [user]);
+  }, [checkSubmissionLimit]);
 
   return {
     canSubmit,
