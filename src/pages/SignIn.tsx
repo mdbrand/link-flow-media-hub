@@ -6,7 +6,7 @@ import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
@@ -25,6 +25,7 @@ const SignIn = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [signInError, setSignInError] = useState<string | null>(null);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
   const { user, loading } = useAuth();
   
   const form = useForm<z.infer<typeof formSchema>>({
@@ -41,6 +42,41 @@ const SignIn = () => {
       navigate('/submissions');
     }
   }, [user, loading, navigate]);
+
+  const handleForgotPassword = async () => {
+    const email = form.getValues("email");
+    if (!email) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please enter your email address first.",
+      });
+      return;
+    }
+
+    setIsResettingPassword(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Check your email",
+        description: "We've sent you a password reset link.",
+      });
+    } catch (error) {
+      console.error("Password reset error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to send reset password email. Please try again.",
+      });
+    } finally {
+      setIsResettingPassword(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -144,7 +180,37 @@ const SignIn = () => {
                 </Button>
               </form>
             </Form>
+            
+            <div className="mt-4 text-center">
+              <Button
+                variant="link"
+                onClick={handleForgotPassword}
+                disabled={isResettingPassword}
+                className="text-sm text-muted-foreground hover:text-primary"
+              >
+                {isResettingPassword ? "Sending reset link..." : "Forgot Password?"}
+              </Button>
+            </div>
           </CardContent>
+          <CardFooter className="flex flex-col space-y-4">
+            <div className="relative w-full">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-muted" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  New to our platform?
+                </span>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/payment?plan=Launch%20Special')}
+              className="w-full"
+            >
+              Create an Account
+            </Button>
+          </CardFooter>
         </Card>
       </div>
     </div>
