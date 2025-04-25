@@ -63,6 +63,31 @@ const SignUp = () => {
       setIsLoading(true);
       setSignUpError(null);
       
+      console.log("SignUp: Attempting to sign up with email:", values.email);
+      
+      // First, check if user already exists
+      const { data: existingUser, error: checkError } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
+      });
+      
+      if (existingUser?.user) {
+        // User exists and password was correct
+        console.log("SignUp: User already exists and could sign in");
+        toast({
+          title: "Account already exists",
+          description: "You've been signed in with your existing account.",
+        });
+        navigate('/submissions');
+        return;
+      }
+      
+      // If error is not about invalid credentials, it's another error
+      if (checkError && !checkError.message?.includes("Invalid login credentials")) {
+        console.error("SignUp: Error checking existing user:", checkError);
+      }
+      
+      // Proceed with signup
       const { data, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
@@ -71,8 +96,23 @@ const SignUp = () => {
       if (error) {
         console.error("SignUp: Error during sign up:", error);
         
+        // If error message contains "User already registered", try to sign in
+        if (error.message?.includes("User already registered")) {
+          toast({
+            variant: "destructive",
+            title: "Account already exists",
+            description: "This email is already registered. Please sign in instead.",
+          });
+          
+          // Redirect to sign in
+          navigate('/signin');
+          return;
+        }
+        
         // Handle the specific email error case
-        if (error.message?.includes("sending confirmation email")) {
+        if (error.message?.includes("sending confirmation email") || error.message?.includes("Failed to send email")) {
+          console.log("SignUp: Email sending failed but account likely created");
+          
           // Account was likely created but confirmation email failed
           toast({
             title: "Account created!",
@@ -91,6 +131,8 @@ const SignUp = () => {
           } else {
             // If sign-in fails, show a more detailed message
             setSignUpError("Your account was created but we couldn't sign you in automatically. Please try signing in manually.");
+            navigate('/signin');
+            return;
           }
         } else {
           // Handle other errors
@@ -104,6 +146,21 @@ const SignUp = () => {
           title: "Account created!",
           description: "Welcome to our platform. Please check your email to verify your account.",
         });
+        
+        // For better user experience, try to sign in immediately without waiting for email verification
+        if (!data.session) {
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: values.email,
+            password: values.password,
+          });
+          
+          if (signInError) {
+            console.log("SignUp: Could not automatically sign in after signup");
+            // Redirect to sign in instead
+            navigate('/signin');
+            return;
+          }
+        }
         
         navigate('/submissions');
       }
