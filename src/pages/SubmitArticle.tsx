@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -24,6 +25,7 @@ const formSchema = z.object({
 const SubmitArticle = () => {
   const [wordCount, setWordCount] = useState(0);
   const [images, setImages] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { user, loading } = useAuth();
@@ -91,9 +93,15 @@ const SubmitArticle = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && images.length + files.length <= 3) {
-      const newImages = Array.from(files).map(file => URL.createObjectURL(file));
-      setImages([...images, ...newImages]);
-      form.setValue("images", [...images, ...newImages]);
+      // Create array from FileList and store the actual File objects
+      const newImageFiles = Array.from(files);
+      setImageFiles([...imageFiles, ...newImageFiles]);
+      
+      // Create object URLs for preview
+      const newImageUrls = newImageFiles.map(file => URL.createObjectURL(file));
+      const updatedImages = [...images, ...newImageUrls];
+      setImages(updatedImages);
+      form.setValue("images", updatedImages);
     } else {
       toast({
         variant: "destructive",
@@ -104,14 +112,19 @@ const SubmitArticle = () => {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const files = fileInputRef.current?.files;
     await submitArticle({
       title: values.title,
       content: values.content,
-      images: files ? Array.from(files) : [],
+      images: imageFiles, // Use the stored File objects instead of getting them from fileInputRef
       selectedSites: values.selectedSites.map(siteId => availableSites.find(site => site.id === siteId)?.name || siteId),
     });
     navigate('/refer-friend');
+  };
+
+  const removeImage = (indexToRemove: number) => {
+    setImages(prev => prev.filter((_, index) => index !== indexToRemove));
+    setImageFiles(prev => prev.filter((_, index) => index !== indexToRemove));
+    form.setValue("images", images.filter((_, index) => index !== indexToRemove));
   };
 
   return (
@@ -214,12 +227,22 @@ const SubmitArticle = () => {
                   <FormLabel>Images (Max 3)</FormLabel>
                   <div className="grid grid-cols-3 gap-4">
                     {images.map((image, index) => (
-                      <img 
-                        key={index}
-                        src={image}
-                        alt={`Upload ${index + 1}`}
-                        className="w-full h-32 object-cover rounded-md"
-                      />
+                      <div key={index} className="relative">
+                        <img 
+                          src={image}
+                          alt={`Upload ${index + 1}`}
+                          className="w-full h-32 object-cover rounded-md"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => removeImage(index)}
+                          className="absolute top-2 right-2 h-6 w-6 p-0 rounded-full"
+                        >
+                          ×
+                        </Button>
+                      </div>
                     ))}
                   </div>
                   {images.length < 3 && (
