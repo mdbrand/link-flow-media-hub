@@ -27,7 +27,10 @@ export const SubmissionLimitMessage = ({ totalPaid }: SubmissionLimitMessageProp
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>Submission Limit</AlertTitle>
               <AlertDescription>
-                Each payment allows for one article submission. You've already submitted {totalPaid} article{totalPaid !== 1 ? 's' : ''}.
+                {totalPaid === 0 
+                  ? "You need to make a purchase to submit articles."
+                  : `Each payment allows for one article submission. You've already submitted ${totalPaid} article${totalPaid !== 1 ? 's' : ''}.`
+                }
               </AlertDescription>
             </Alert>
             <p>To submit more articles, you'll need to make another purchase.</p>

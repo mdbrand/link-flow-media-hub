@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -6,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { LogOut, Home } from 'lucide-react';
+import { LogOut, Home, Plus } from 'lucide-react';
 
 const sitesMap = {
   site1: "Authentic Sacrifice",
@@ -114,8 +115,12 @@ const Submissions = () => {
       </div>
 
       {submissions.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-600 mb-4">You haven't submitted any articles yet.</p>
+        <div className="text-center py-12 space-y-6">
+          <p className="text-gray-600 text-lg">You haven't submitted any articles yet.</p>
+          <Button onClick={() => navigate('/submit-article')} className="bg-[#9b87f5] hover:bg-purple-700">
+            <Plus className="mr-2 h-4 w-4" />
+            Create Your First Submission
+          </Button>
         </div>
       ) : (
         <Table>
