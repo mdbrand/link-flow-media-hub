@@ -11,13 +11,6 @@ interface ArticleInput {
   selectedSites?: string[];
 }
 
-const sanitizeFileName = (title: string): string => {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric chars with hyphens
-    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
-};
-
 export function useArticles() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -60,7 +53,7 @@ export function useArticles() {
     }
 
     // Process with AI and create Notion pages
-    const { error: processError } = await supabase.functions.invoke('process-article', {
+    const { data, error: processError } = await supabase.functions.invoke('process-article', {
       body: {
         title,
         content,
@@ -69,19 +62,36 @@ export function useArticles() {
       }
     });
 
-    if (processError) throw processError;
+    if (processError) {
+      console.error('Process article error:', processError);
+      throw processError;
+    }
 
-    return article;
+    // Log the Notion page URLs for debugging
+    console.log('Notion Page URLs:', data?.versions?.map(v => v.url));
+
+    return { article, notionUrls: data?.versions?.map(v => v.url) };
   };
 
   const mutation = useMutation({
     mutationFn: submitArticle,
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['articles'] });
       toast({
         title: "Article Submitted Successfully",
         description: "Your article is being processed. You'll receive an email with the AI-generated versions soon.",
       });
+
+      // If no email, show the Notion URLs in a toast
+      if (result.notionUrls && result.notionUrls.length > 0) {
+        toast({
+          title: "Notion Page Links",
+          description: result.notionUrls.map((url, index) => 
+            `Site ${index + 1}: ${url}`
+          ).join('\n'),
+          duration: 10000 // Show for 10 seconds
+        });
+      }
     },
     onError: (error) => {
       toast({
@@ -92,6 +102,13 @@ export function useArticles() {
       console.error('Article submission error:', error);
     },
   });
+
+  const sanitizeFileName = (title: string): string => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric chars with hyphens
+      .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+  };
 
   return { submitArticle: mutation.mutate, isSubmitting: mutation.isPending };
 }
