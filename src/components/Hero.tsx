@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 
 const Hero = () => {
@@ -15,8 +14,7 @@ const Hero = () => {
             Stop Chasing Media Coverage, Our AI Publishes Your Content on <span className="text-[#9b87f5]">6 Premium Sites</span> Instantly
           </h1>
           <p className="text-xl text-gray-600 mb-8">
-            Boost your credibility and reach with our premium media placements. 
-            One article, distributed across 6 top-tier publications, custom-tailored by our AI.
+            Boost your credibility and reach with our premium media placements. One article distributed across 6 active publications, custom-tailored by our AI.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button 
