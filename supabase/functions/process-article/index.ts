@@ -21,9 +21,40 @@ const resend = new Resend(Deno.env.get('RESEND_API_KEY'))
 
 const databaseId = Deno.env.get('NOTION_DATABASE_ID') as string
 
+// Voice and tone guidelines for each site
+const siteGuidelines = {
+  "Authentic Sacrifice": "Compassionate, contemplative, and purposeful. Write in a warm yet reverent tone, balancing spiritual depth with practical guidance. Use measured pacing with occasional powerful statements that resonate emotionally. Use accessible yet meaningful vocabulary, avoiding overly technical theological terms while maintaining spiritual authenticity.",
+  "Authority Maximizer": "Confident, decisive, and strategic. Write as a seasoned expert who has 'been there, done that.' Use direct, action-oriented language with powerful verbs and minimal qualifiers. Include occasional bold statements and challenges to the reader. Mix concise, punchy sentences with deeper insights that demonstrate thought leadership.",
+  "Booked Impact": "Results-driven, energetic, and practical. Write like a focused conversation with a high-performance coach. Use metric-driven language, success stories, and clear frameworks. Balance professional expertise with approachable enthusiasm. Include industry terminology but explain it clearly for newcomers.",
+  "Live Love Hobby": "Enthusiastic, supportive, and community-oriented. Write like a passionate friend sharing their joy. Use warm, inviting language with personal touches and relatable anecdotes. Include encouraging phrases and celebrate small wins. Keep technical information accessible and emphasize emotional benefits.",
+  "MDB Consultancy": "Polished, analytical, and solution-focused. Write with seasoned expertise, clarity, and precision. Use well-structured sentences with evidence-based assertions. Balance professional terminology with clear explanations. Include subtle confidence markers that demonstrate industry experience without appearing boastful.",
+  "MDBRAND": "Innovative, dynamic, and trend-aware. Write like digital natives who are ahead of the curve. Use contemporary marketing language, reference current digital trends, and incorporate data-driven insights. Balance technical expertise with creative energy. Vary between punchy statements and detailed explanations.",
+  "New York Post Daily": "Fast-paced, engaging, and slightly provocative. Write with the vibrant energy of New York, mixing urban sophistication and street-smart directness. Use attention-grabbing statements. Balance entertainment value with informative content. Include cultural references and playful language that feels distinctly New York.",
+  "Seismic Sports": "High-energy, passionate, and authoritative. Write to convey the excitement and drama of sports competition. Use dynamic language with vivid descriptions that put readers in the moment. Balance statistical analysis with emotional storytelling. Include sports terminology and fan-perspective comments.",
+  "The LA Note": "Trendsetting, culturally aware, and casually sophisticated. Write to capture LA's blend of laid-back attitude and cultural influence. Use smooth, flowing language with contemporary references. Balance entertainment reporting with cultural analysis. Use current but not overly trendy vocabulary.",
+  "Thought Leaders Ethos": "Insightful, visionary, and intellectually stimulating. Write like forward-thinkers shaping the future. Use thought-provoking questions and conceptual frameworks. Balance abstract ideas with practical applications. Vary between concise wisdom and expanded explorations of complex concepts.",
+  "Trending Consumerism": "Informative, current, and discerning. Write like a savvy consumer advocate who understands market forces and personal needs. Use balanced evaluations with clear recommendations. Balance trend analysis with practical consumer advice. Include current product terminology with accessible explanations.",
+  "HKlub Fitness": "Motivational, empowering, and knowledgeable. Write like a supportive personal trainer combining expertise with encouragement. Use direct, energetic language that inspires action. Balance scientific fitness information with accessible explanations. Include goal-oriented language and celebrate progress."
+}
+
 async function generateUniqueArticle(originalContent: string, siteName: string) {
-  const prompt = `Rewrite the following article in the style and tone appropriate for ${siteName}, 
-                 making it unique while maintaining the core message: ${originalContent}`
+  const siteGuideline = siteGuidelines[siteName as keyof typeof siteGuidelines] || "";
+  
+  const prompt = `You are a professional content writer specializing in adapting articles for different websites while maintaining their core message.
+
+Voice and Tone Guidelines for ${siteName}:
+${siteGuideline}
+
+Please rewrite the following article according to these specific voice and tone guidelines, while keeping the core message and key points intact:
+
+${originalContent}
+
+Make sure the rewritten article:
+1. Perfectly matches the specified voice and tone
+2. Maintains the original article's key points and message
+3. Has a similar length to the original
+4. Reads naturally and engagingly
+5. Is unique and different from other versions`
 
   const completion = await openai.chat.completions.create({
     model: "gpt-4o",
