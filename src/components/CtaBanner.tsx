@@ -12,8 +12,7 @@ const CtaBanner = () => {
       <div className="max-w-7xl mx-auto text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Boost Your Credibility?</h2>
         <p className="text-xl mb-8 max-w-3xl mx-auto">
-          Join thousands of businesses that have increased their visibility and authority
-          with our premium media placements across trusted publications.
+          Join other strategic businesses that have increased their visibility and authority with our premium media placements across trusted publications.
         </p>
         <Button 
           onClick={scrollToPricing}
@@ -27,3 +26,4 @@ const CtaBanner = () => {
 };
 
 export default CtaBanner;
+
