@@ -29,7 +29,7 @@ const ReferFriend = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-purple-700 text-center">
-              Ready to Amplify Your Message?
+              Extend Your Reach Even Further By Getting Booked On Podcasts Without Chasing Anyone.
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -43,15 +43,22 @@ const ReferFriend = () => {
             
             <div className="space-y-6 text-center">
               <h3 className="text-2xl font-bold text-purple-700">
-                Podcast Like a Pro Without Lifting a Finger (Okay, Maybe Just One Click)
+                Podcast Like a Pro...Without the Grind
               </h3>
               <p className="text-lg text-gray-700">
-                PodMatch is like having a full-time podcasting assistant, minus the awkward small talk. 
-                It finds your perfect match, handles the admin grunt work, and keeps your interviews 
-                flowing like hot takes in a Reddit thread.
+                Why chase interviews when they can come to you?
               </p>
               <p className="text-lg text-gray-700">
-                Get featured on top podcasts and share your story with the world through PodMatch!
+                PodMatch connects you with the right podcasts fast: no pitching, no spreadsheets, no wasted time.
+              </p>
+              <p className="text-lg text-gray-700">
+                It's like having a booking agent, minus the commission and drama.
+              </p>
+              <p className="text-lg text-gray-700">
+                Get matched. Get interviewed. Get heard.
+              </p>
+              <p className="text-lg text-gray-700 font-semibold">
+                Step up. Speak out. PodMatch makes it effortless.
               </p>
 
               <div className="space-y-4">
