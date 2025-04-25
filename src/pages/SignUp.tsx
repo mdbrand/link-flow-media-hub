@@ -20,6 +20,24 @@ const SignUp = () => {
     }
   }, [user, loading, navigate]);
 
+  // Modified version of handleSignUp that captures the email for redirection
+  const handleSignUpWithEmailCapture = (values) => {
+    // Store the email temporarily in case we need to redirect to sign in
+    const email = values.email;
+    
+    return handleSignUp({
+      ...values,
+      // Add a custom onSignupComplete callback
+      onSignupComplete: (success) => {
+        if (!success) {
+          // If signup didn't complete with automatic login, 
+          // redirect to sign in with the email prefilled
+          navigate(`/signin?from=signup&email=${encodeURIComponent(email)}`);
+        }
+      }
+    });
+  };
+
   if (loading) {
     return (
       <AuthCard 

@@ -27,6 +27,11 @@ export function useSignInForm() {
     },
   });
 
+  // Function to set email value programmatically
+  const setEmailValue = (email: string) => {
+    form.setValue("email", email);
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
@@ -106,6 +111,7 @@ export function useSignInForm() {
     signInError,
     isResettingPassword,
     onSubmit: form.handleSubmit(onSubmit),
-    handleForgotPassword
+    handleForgotPassword,
+    setEmailValue
   };
 }

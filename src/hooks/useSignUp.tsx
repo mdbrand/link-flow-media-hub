@@ -79,12 +79,12 @@ export const useSignUp = () => {
           console.log("SignUp: Email sending failed but proceeding with account creation");
           
           // Since email verification failed, try to sign in the user directly
-          const { error: signInError } = await supabase.auth.signInWithPassword({
+          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
             email: values.email,
             password: values.password,
           });
           
-          if (!signInError) {
+          if (!signInError && signInData?.user) {
             toast({
               title: "Account created!",
               description: "Your account was created successfully. Email verification was skipped.",
@@ -92,10 +92,12 @@ export const useSignUp = () => {
             navigate('/submissions');
             return;
           } else {
+            // Improved error handling when sign-in fails after account creation
+            console.error("SignUp: Could not sign in after account creation:", signInError);
             toast({
-              variant: "destructive", 
-              title: "Partial success",
-              description: "Your account was created but we couldn't sign you in automatically. Please try signing in manually."
+              variant: "default", 
+              title: "Account created",
+              description: "Your account was created. Please sign in with your email and password.",
             });
             navigate('/signin');
             return;
@@ -120,22 +122,24 @@ export const useSignUp = () => {
         
         // If no session (probably due to email confirmation requirements)
         // Try to sign in anyway since we know email verification may fail
-        const { error: signInError } = await supabase.auth.signInWithPassword({
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
           email: values.email,
           password: values.password,
         });
         
-        if (!signInError) {
+        if (!signInError && signInData?.user) {
           toast({
             title: "Account created!",
             description: "Welcome to our platform.",
           });
           navigate('/submissions');
         } else {
+          // Improved messaging for a better user experience
+          console.log("SignUp: Could not automatically sign in after account creation");
           toast({
-            variant: "default", // Changed from "warning" to "default" to fix the type error
+            variant: "default",
             title: "Account created",
-            description: "Your account was created, but you need to sign in manually.",
+            description: "Your account was created. Please sign in with your email and password.",
           });
           navigate('/signin');
         }
