@@ -36,7 +36,7 @@ export const SubmissionLimitMessage = ({ totalPaid }: SubmissionLimitMessageProp
             <Button variant="outline" onClick={() => navigate('/submissions')}>
               View My Submissions
             </Button>
-            <Button onClick={() => navigate('/payment')}>
+            <Button onClick={() => navigate('/payment?plan=Launch Special')}>
               Purchase Another Submission
             </Button>
           </CardFooter>
