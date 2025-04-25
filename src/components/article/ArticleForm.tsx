@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -80,6 +79,15 @@ export const ArticleForm = ({ onSubmit, isSubmitting, remainingSubmissions }: Ar
     form.setValue("images", images.filter((_, index) => index !== indexToRemove));
   };
 
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    const processedImages = imageFiles.map(file => URL.createObjectURL(file));
+    
+    onSubmit({
+      ...values,
+      images: processedImages
+    });
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -99,7 +107,7 @@ export const ArticleForm = ({ onSubmit, isSubmitting, remainingSubmissions }: Ar
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit((values) => onSubmit({ ...values, images: imageFiles }))} className="space-y-6">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="title"

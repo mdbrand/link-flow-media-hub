@@ -47,14 +47,28 @@ const SubmitArticle = () => {
   }
 
   const handleSubmit = async (values: any) => {
+    // Extract the image files from object URLs
+    const extractedFiles = values.images.map((url: string) => {
+      // Fetch the file from the object URL
+      return fetch(url).then(r => r.blob()).then(blob => 
+        new File([blob], `article-image-${Math.random().toString(36).substring(7)}.jpg`, { type: blob.type })
+      );
+    });
+
+    const imageFiles = await Promise.all(extractedFiles);
+
     await submitArticle({
       title: values.title,
       content: values.content,
-      images: values.images,
+      images: imageFiles,
       selectedSites: values.selectedSites.map((siteId: string) => 
         availableSites.find(site => site.id === siteId)?.name || siteId
       ),
     });
+
+    // Clean up object URLs to prevent memory leaks
+    values.images.forEach((url: string) => URL.revokeObjectURL(url));
+
     navigate('/refer-friend');
   };
 
