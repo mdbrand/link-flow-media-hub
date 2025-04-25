@@ -1,4 +1,3 @@
-
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,7 +26,7 @@ const Payment = () => {
   // Define features based on plan
   const features = {
     'Launch Special': [
-      "Featured on ALL 12 media sites",
+      "Featured on 6 media sites",
       "1 article submission",
       "Advanced AI adaptation",
       "Priority editorial review",
