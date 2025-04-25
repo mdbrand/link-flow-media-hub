@@ -14,11 +14,6 @@ const Sales = () => {
       {/* Hero Section */}
       <div className="max-w-4xl mx-auto px-4 pt-20 pb-12">
         <div className="text-center mb-8">
-          <div className="flex justify-center text-yellow-500 mb-4">
-            {[...Array(5)].map((_, index) => (
-              <Star key={index} className="h-8 w-8 fill-current" />
-            ))}
-          </div>
           <h1 className="text-4xl md:text-5xl font-bold text-center mb-8">
             I'm about to share something that could dramatically change how you think about{" "}
             <span className="text-[#9b87f5]">media coverage</span> forever.
@@ -27,6 +22,13 @@ const Sales = () => {
             It's a breakthrough that's so revolutionary, so downright practical, that once you understand it, 
             you'll wonder how you ever promoted your business the old way.
           </p>
+          
+          {/* Stars added here, between the subtitle and the next section */}
+          <div className="flex justify-center text-yellow-500 my-6">
+            {[...Array(5)].map((_, index) => (
+              <Star key={index} className="h-8 w-8 fill-current mx-1" />
+            ))}
+          </div>
         </div>
       </div>
 
