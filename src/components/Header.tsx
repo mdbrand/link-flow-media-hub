@@ -2,18 +2,24 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogIn } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const scrollToSection = (sectionId: string) => {
-    const section = document.getElementById(sectionId);
-    section?.scrollIntoView({ behavior: 'smooth' });
+  const handleNavigation = (sectionId: string) => {
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: sectionId } });
+    } else {
+      const section = document.getElementById(sectionId);
+      section?.scrollIntoView({ behavior: 'smooth' });
+    }
     setIsMenuOpen(false);
   };
 
@@ -42,7 +48,7 @@ const Header = () => {
           {navLinks.map((link) => (
             <button 
               key={link.name}
-              onClick={() => link.url === "/" ? window.scrollTo({ top: 0, behavior: 'smooth' }) : scrollToSection(link.url)}
+              onClick={() => link.url === "/" ? handleNavigation('') : handleNavigation(link.url)}
               className="text-gray-600 hover:text-[#9b87f5] font-medium transition-colors"
             >
               {link.name}
@@ -90,7 +96,7 @@ const Header = () => {
               {navLinks.map((link) => (
                 <button
                   key={link.name}
-                  onClick={() => link.url === "/" ? window.scrollTo({ top: 0, behavior: 'smooth' }) : scrollToSection(link.url)}
+                  onClick={() => link.url === "/" ? handleNavigation('') : handleNavigation(link.url)}
                   className="text-gray-600 hover:text-[#9b87f5] font-medium transition-colors text-left"
                 >
                   {link.name}

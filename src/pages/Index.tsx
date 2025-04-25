@@ -1,4 +1,5 @@
 
+import { useEffect, useLocation } from 'react';
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import MediaSites from "../components/MediaSites";
@@ -12,6 +13,20 @@ import CountdownTimer from "../components/CountdownTimer";
 import BottomCtaBanner from "../components/BottomCtaBanner";
 
 const Index = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Handle scroll to section when navigating from another page
+    if (location.state?.scrollTo) {
+      const section = document.getElementById(location.state.scrollTo);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+      // Clear the state to prevent unwanted scrolling
+      window.history.replaceState({}, '');
+    }
+  }, [location]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
