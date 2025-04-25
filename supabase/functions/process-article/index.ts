@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { Client } from "npm:@notionhq/client"
 import OpenAI from "https://esm.sh/openai@4.20.1"
@@ -157,7 +158,7 @@ serve(async (req) => {
     console.log("Sending confirmation email to:", userEmail);
     
     try {
-      // Send confirmation email to user
+      // Send confirmation email to user with proper hyperlinks
       const emailResult = await resend.emails.send({
         from: 'Article Generator <onboarding@resend.dev>',
         to: userEmail,
@@ -172,12 +173,13 @@ serve(async (req) => {
             <p>Your article versions are ready! Here are the links:</p>
             <ul>
               ${articleVersions.map(v => `
-                <li><strong>${v.site}</strong>: <a href="${v.url}">View Article</a></li>
+                <li><strong>${v.site}</strong>: <a href="${v.url}" style="color: #2563eb; text-decoration: underline;">${v.url}</a></li>
               `).join('')}
             </ul>
           ` : `
             <p>Your article is currently being processed. You'll receive another email once the processing is complete.</p>
           `}
+          <p>Thank you for using our service!</p>
         `
       });
 
