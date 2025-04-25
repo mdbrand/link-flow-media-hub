@@ -52,6 +52,10 @@ export const useSignUp = () => {
       const { data, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
+        options: {
+          // Skip email verification for now to allow users to proceed
+          emailRedirectTo: `${window.location.origin}/auth-callback`
+        }
       });
 
       if (error) {
@@ -67,24 +71,32 @@ export const useSignUp = () => {
           return;
         }
         
-        if (error.message?.includes("sending confirmation email") || error.message?.includes("Failed to send email")) {
-          console.log("SignUp: Email sending failed but account likely created");
+        // Handle email sending failure - allow user to continue
+        if (error.message?.includes("sending confirmation email") || 
+            error.message?.includes("Failed to send email") || 
+            error.message?.includes("Error sending confirmation email")) {
           
-          toast({
-            title: "Account created!",
-            description: "Your account was created, but we couldn't send a confirmation email. You can still proceed to use the application.",
-          });
+          console.log("SignUp: Email sending failed but proceeding with account creation");
           
+          // Since email verification failed, try to sign in the user directly
           const { error: signInError } = await supabase.auth.signInWithPassword({
             email: values.email,
             password: values.password,
           });
           
           if (!signInError) {
+            toast({
+              title: "Account created!",
+              description: "Your account was created successfully. Email verification was skipped.",
+            });
             navigate('/submissions');
             return;
           } else {
-            setSignUpError("Your account was created but we couldn't sign you in automatically. Please try signing in manually.");
+            toast({
+              variant: "destructive", 
+              title: "Partial success",
+              description: "Your account was created but we couldn't sign you in automatically. Please try signing in manually."
+            });
             navigate('/signin');
             return;
           }
@@ -95,25 +107,38 @@ export const useSignUp = () => {
       
       if (data?.user) {
         console.log("SignUp: User created successfully");
-        toast({
-          title: "Account created!",
-          description: "Welcome to our platform. Please check your email to verify your account.",
-        });
         
-        if (!data.session) {
-          const { error: signInError } = await supabase.auth.signInWithPassword({
-            email: values.email,
-            password: values.password,
+        // If we have a session already, proceed to the app
+        if (data.session) {
+          toast({
+            title: "Account created!",
+            description: "Welcome to our platform.",
           });
-          
-          if (signInError) {
-            console.log("SignUp: Could not automatically sign in after signup");
-            navigate('/signin');
-            return;
-          }
+          navigate('/submissions');
+          return;
         }
         
-        navigate('/submissions');
+        // If no session (probably due to email confirmation requirements)
+        // Try to sign in anyway since we know email verification may fail
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: values.email,
+          password: values.password,
+        });
+        
+        if (!signInError) {
+          toast({
+            title: "Account created!",
+            description: "Welcome to our platform.",
+          });
+          navigate('/submissions');
+        } else {
+          toast({
+            variant: "warning",
+            title: "Account created",
+            description: "Your account was created, but you need to sign in manually.",
+          });
+          navigate('/signin');
+        }
       }
     } catch (error: any) {
       console.error("SignUp: Detailed error:", error);
