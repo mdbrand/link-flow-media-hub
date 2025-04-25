@@ -89,6 +89,7 @@ const Submissions = () => {
             <TableRow>
               <TableHead>Title</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Selected Sites</TableHead>
               <TableHead>Submitted On</TableHead>
               <TableHead>Last Updated</TableHead>
             </TableRow>
@@ -106,6 +107,24 @@ const Submissions = () => {
                   </span>
                 </TableCell>
                 <TableCell>
+                  <div className="max-w-xs">
+                    {submission.selected_sites?.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {submission.selected_sites.map((site: string, index: number) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-xs"
+                          >
+                            {site}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-gray-500 text-sm">No sites selected</span>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>
                   {new Date(submission.created_at).toLocaleDateString()}
                 </TableCell>
                 <TableCell>
@@ -121,4 +140,3 @@ const Submissions = () => {
 };
 
 export default Submissions;
-
