@@ -25,7 +25,11 @@ const FaqSectionEditable = () => {
                 {faq.question}
               </AccordionTrigger>
               <AccordionContent className="text-gray-600">
-                {faq.answer}
+                {index === 6 ? (
+                  <div dangerouslySetInnerHTML={{ __html: faq.answer }} />
+                ) : (
+                  faq.answer
+                )}
               </AccordionContent>
             </AccordionItem>
           ))}
