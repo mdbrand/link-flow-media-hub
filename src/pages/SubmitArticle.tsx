@@ -41,16 +41,18 @@ const SubmitArticle = () => {
   });
 
   const availableSites = [
-    { id: "site1", name: "Tech Insider Daily" },
-    { id: "site2", name: "Business Growth Weekly" },
-    { id: "site3", name: "Digital Innovation Hub" },
-    { id: "site4", name: "Marketing Trends Today" },
-    { id: "site5", name: "Startup Success Stories" },
-    { id: "site6", name: "Enterprise Solutions Review" },
-    { id: "site7", name: "Future Tech Magazine" },
-    { id: "site8", name: "Industry Leaders Forum" },
-    { id: "site9", name: "Global Business Insights" },
-    { id: "site10", name: "Digital Transformation Weekly" }
+    { id: "site1", name: "Authentic Sacrifice" },
+    { id: "site2", name: "Authority Maximizer" },
+    { id: "site3", name: "Booked Impact" },
+    { id: "site4", name: "Live Love Hobby" },
+    { id: "site5", name: "MDB Consultancy" },
+    { id: "site6", name: "MDBRAND" },
+    { id: "site7", name: "New York Post Daily" },
+    { id: "site8", name: "Seismic Sports" },
+    { id: "site9", name: "The LA Note" },
+    { id: "site10", name: "Thought Leaders Ethos" },
+    { id: "site11", name: "Trending Consumerism" },
+    { id: "site12", name: "HKlub Fitness" }
   ];
 
   useEffect(() => {
