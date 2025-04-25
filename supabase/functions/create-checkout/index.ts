@@ -30,36 +30,16 @@ serve(async (req) => {
       apiVersion: '2023-10-16',
     });
 
-    // Map plan names to prices in cents
-    const priceMap = {
-      'Launch Special': 9700,  // $97.00
-      'Starter': 29700,        // $297.00
-      'Growth': 49700,         // $497.00
-      'Enterprise': 99700      // $997.00
-    };
-
-    const amount = priceMap[planName];
-    if (!amount) {
-      throw new Error(`Invalid plan name: ${planName}`);
-    }
-
-    console.log('Using price for plan:', planName, amount);
+    // Using the fixed price ID for all plans during the launch special period
+    const priceId = 'price_0RHfBn3YTXYuny55AtWf3lqn';
+    console.log('Using price ID:', priceId);
     
-    // Create checkout session with the appropriate pricing
+    // Create checkout session with the specific price ID
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: `${planName} Media Coverage`,
-              description: planName === 'Launch Special' 
-                ? 'Featured on all 12 media sites'
-                : `${planName} Media Coverage Package`,
-            },
-            unit_amount: amount,
-          },
+          price: priceId,
           quantity: 1,
         },
       ],
@@ -81,8 +61,6 @@ serve(async (req) => {
       const { data: orderData, error: orderError } = await supabase.from('orders').insert({
         stripe_session_id: session.id,
         status: 'pending',
-        amount: amount,
-        currency: 'usd',
         plan_name: planName
       }).select();
 
