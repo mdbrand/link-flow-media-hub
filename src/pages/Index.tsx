@@ -12,6 +12,7 @@ import FaqSectionEditable from "../components/FaqSectionEditable";
 import Footer from "../components/Footer";
 import CountdownTimer from "../components/CountdownTimer";
 import BottomCtaBanner from "../components/BottomCtaBanner";
+import EliteContributorSection from "../components/EliteContributorSection";
 
 const Index = () => {
   const location = useLocation();
@@ -46,6 +47,7 @@ const Index = () => {
         <TestimonialsSection />
         <FaqSectionEditable />
         <BottomCtaBanner />
+        <EliteContributorSection />
       </main>
       <Footer />
     </div>
@@ -53,4 +55,3 @@ const Index = () => {
 };
 
 export default Index;
-
