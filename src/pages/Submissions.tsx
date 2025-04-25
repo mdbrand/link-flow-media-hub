@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -62,11 +61,11 @@ const Submissions = () => {
     fetchSubmissions();
   }, [user, navigate, toast]);
 
-  const handleSignOut = async () => {
+  const handleSignOut = async (e: React.MouseEvent) => {
+    e.preventDefault();
     try {
       console.log("Submissions: Initiating sign out");
       await signOut();
-      // Navigation is handled in the signOut function
     } catch (error) {
       console.error("Submissions: Error during sign out:", error);
       toast({

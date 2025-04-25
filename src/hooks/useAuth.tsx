@@ -40,10 +40,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
     
-    // Set up auth state listener FIRST
+    // IMPORTANT: Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log("AuthProvider: Auth state changed:", event, session?.user?.email);
+        
+        // Handle sign out event specifically
+        if (event === 'SIGNED_OUT') {
+          console.log("AuthProvider: User signed out, clearing state");
+          setUser(null);
+          setSession(null);
+          
+          // Small delay to ensure state is updated before navigation
+          setTimeout(() => {
+            navigate('/signin');
+          }, 0);
+          
+          return;
+        }
+        
+        // Handle other auth events
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -74,11 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log("AuthProvider: Attempting to sign out");
       
-      // Clear state first
-      setUser(null);
-      setSession(null);
-      
-      // Sign out from Supabase with more complete options
+      // Sign out from Supabase first - this triggers the onAuthStateChange event
       const { error } = await supabase.auth.signOut({
         scope: 'global' // This ensures all devices and tabs are signed out
       });
@@ -88,7 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw error;
       }
 
-      console.log("AuthProvider: Successfully signed out");
+      console.log("AuthProvider: Successfully signed out from Supabase");
       
       // Force clear any remaining localStorage items related to auth
       localStorage.removeItem('supabase.auth.token');
@@ -98,8 +110,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         description: "You have been signed out of your account",
       });
       
-      // Navigate to the sign-in page after successful sign out
-      navigate('/signin');
+      // Navigation is now handled by the onAuthStateChange event listener
+      // This prevents any race conditions or state conflicts
     } catch (error) {
       console.error("AuthProvider: Sign out error:", error);
       toast({

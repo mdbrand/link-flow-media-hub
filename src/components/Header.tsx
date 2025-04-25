@@ -31,11 +31,12 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
-  const handleSignOut = async () => {
+  const handleSignOut = async (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent default link behavior
     try {
       console.log("Header: Initiating sign out");
       await signOut();
-      // Navigation is handled in the signOut function
+      // No need to navigate here, it's handled in the auth provider
       setIsMenuOpen(false);
     } catch (error) {
       console.error("Header: Error during sign out:", error);
