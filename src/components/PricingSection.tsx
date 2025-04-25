@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Check, CreditCard, Sparkles } from "lucide-react";
+import { Check, CreditCard, Sparkles, BadgePercent } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 
@@ -60,8 +60,16 @@ const PricingSection = () => {
     <section id="pricing" className="py-16 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Special Launch Offer Banner */}
-        <div className="mb-12 transform hover:scale-105 transition-transform">
+        <div className="mb-12 transform hover:scale-105 transition-transform relative">
           <div className="bg-gradient-to-r from-[#8B5CF6] to-[#D946EF] rounded-lg p-6 shadow-lg border border-purple-300">
+            {/* New Badge to make offer pop */}
+            <div className="absolute -top-4 right-4 z-10">
+              <div className="bg-yellow-300 text-black px-3 py-1 rounded-full font-bold text-sm flex items-center space-x-2 shadow-lg">
+                <BadgePercent className="h-5 w-5 text-red-600" />
+                <span>Limited Time Offer!</span>
+              </div>
+            </div>
+
             <div className="flex items-center justify-between flex-col md:flex-row gap-6">
               <div>
                 <div className="flex items-center space-x-4 mb-4">
