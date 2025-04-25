@@ -35,6 +35,44 @@ const SignIn = () => {
     },
   });
 
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      setIsLoading(true);
+      setSignInError(null);
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
+      });
+
+      if (error) {
+        console.error("SignIn error:", error);
+        setSignInError(error.message);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error.message,
+        });
+        return;
+      }
+
+      if (data.user) {
+        console.log("SignIn: User authenticated successfully");
+        navigate('/submissions');
+      }
+    } catch (error: any) {
+      console.error("Unexpected sign-in error:", error);
+      setSignInError(error.message || "An unexpected error occurred");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "An unexpected error occurred",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (user && !loading) {
       console.log("SignIn: User already authenticated, checking for pending orders");
