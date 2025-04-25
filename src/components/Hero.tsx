@@ -15,7 +15,7 @@ const Hero = () => {
             Stop Chasing Media Coverage: Our AI Instantly Places You Across <span className="text-[#9b87f5]">Premium Sites</span> With One Submission
           </h1>
           <p className="text-xl text-gray-600 mb-8">
-            Boost your credibility with guaranteed featured placements across our growing media network, where our proprietary AI transforms your single submission into multiple custom-tailored articles.
+            Command your media strategy with precision-timed placements across premium publications: no expensive agency retainers, no endless email chains, just strategic visibility exactly when your business needs it most.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button 
@@ -46,3 +46,4 @@ const Hero = () => {
 };
 
 export default Hero;
+
