@@ -1,5 +1,4 @@
-
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -8,12 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Text } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { useArticles } from '@/hooks/useArticles';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from "@/hooks/use-toast";
 import Header from '@/components/Header';
+import { WordCounter } from '@/components/article/WordCounter';
+import { ImageUploader } from '@/components/article/ImageUploader';
+import { SiteSelector } from '@/components/article/SiteSelector';
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -22,11 +23,25 @@ const formSchema = z.object({
   selectedSites: z.array(z.string()).min(6, "Please select 6 sites").max(6, "Maximum 6 sites allowed")
 });
 
+const availableSites = [
+  { id: "site1", name: "Authentic Sacrifice" },
+  { id: "site2", name: "Authority Maximizer" },
+  { id: "site3", name: "Booked Impact" },
+  { id: "site4", name: "Live Love Hobby" },
+  { id: "site5", name: "MDB Consultancy" },
+  { id: "site6", name: "MDBRAND" },
+  { id: "site7", name: "New York Post Daily" },
+  { id: "site8", name: "Seismic Sports" },
+  { id: "site9", name: "The LA Note" },
+  { id: "site10", name: "Thought Leaders Ethos" },
+  { id: "site11", name: "Trending Consumerism" },
+  { id: "site12", name: "HKlub Fitness" }
+];
+
 const SubmitArticle = () => {
   const [wordCount, setWordCount] = useState(0);
   const [images, setImages] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const { submitArticle, isSubmitting } = useArticles();
@@ -41,21 +56,6 @@ const SubmitArticle = () => {
       selectedSites: []
     },
   });
-
-  const availableSites = [
-    { id: "site1", name: "Authentic Sacrifice" },
-    { id: "site2", name: "Authority Maximizer" },
-    { id: "site3", name: "Booked Impact" },
-    { id: "site4", name: "Live Love Hobby" },
-    { id: "site5", name: "MDB Consultancy" },
-    { id: "site6", name: "MDBRAND" },
-    { id: "site7", name: "New York Post Daily" },
-    { id: "site8", name: "Seismic Sports" },
-    { id: "site9", name: "The LA Note" },
-    { id: "site10", name: "Thought Leaders Ethos" },
-    { id: "site11", name: "Trending Consumerism" },
-    { id: "site12", name: "HKlub Fitness" }
-  ];
 
   useEffect(() => {
     if (!loading && !user) {
@@ -93,11 +93,9 @@ const SubmitArticle = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && images.length + files.length <= 3) {
-      // Create array from FileList and store the actual File objects
       const newImageFiles = Array.from(files);
       setImageFiles([...imageFiles, ...newImageFiles]);
       
-      // Create object URLs for preview
       const newImageUrls = newImageFiles.map(file => URL.createObjectURL(file));
       const updatedImages = [...images, ...newImageUrls];
       setImages(updatedImages);
@@ -111,20 +109,20 @@ const SubmitArticle = () => {
     }
   };
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    await submitArticle({
-      title: values.title,
-      content: values.content,
-      images: imageFiles, // Use the stored File objects instead of getting them from fileInputRef
-      selectedSites: values.selectedSites.map(siteId => availableSites.find(site => site.id === siteId)?.name || siteId),
-    });
-    navigate('/refer-friend');
-  };
-
   const removeImage = (indexToRemove: number) => {
     setImages(prev => prev.filter((_, index) => index !== indexToRemove));
     setImageFiles(prev => prev.filter((_, index) => index !== indexToRemove));
     form.setValue("images", images.filter((_, index) => index !== indexToRemove));
+  };
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    await submitArticle({
+      title: values.title,
+      content: values.content,
+      images: imageFiles,
+      selectedSites: values.selectedSites.map(siteId => availableSites.find(site => site.id === siteId)?.name || siteId),
+    });
+    navigate('/refer-friend');
   };
 
   return (
@@ -169,10 +167,7 @@ const SubmitArticle = () => {
                             {...field}
                             onChange={handleContentChange}
                           />
-                          <div className="absolute bottom-2 right-2 flex items-center gap-2 text-sm text-gray-500 bg-white px-2 py-1 rounded-md">
-                            <Text size={16} />
-                            <span>{wordCount} words</span>
-                          </div>
+                          <WordCounter count={wordCount} />
                         </div>
                       </FormControl>
                       <FormMessage />
@@ -180,88 +175,16 @@ const SubmitArticle = () => {
                   )}
                 />
 
-                <FormField
+                <ImageUploader
+                  images={images}
+                  onUpload={handleImageUpload}
+                  onRemove={removeImage}
+                />
+
+                <SiteSelector
                   control={form.control}
-                  name="selectedSites"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Select 6 Media Sites for Publication</FormLabel>
-                      <FormControl>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {availableSites.map((site) => (
-                            <div key={site.id} className="flex items-center space-x-2">
-                              <input
-                                type="checkbox"
-                                id={site.id}
-                                checked={field.value?.includes(site.id)}
-                                onChange={(e) => {
-                                  const updatedSelection = e.target.checked
-                                    ? [...(field.value || []), site.id]
-                                    : field.value?.filter((id) => id !== site.id) || [];
-                                  if (updatedSelection.length <= 6) {
-                                    field.onChange(updatedSelection);
-                                  } else {
-                                    toast({
-                                      variant: "destructive",
-                                      title: "Selection limit reached",
-                                      description: "You can only select 6 sites",
-                                    });
-                                  }
-                                }}
-                                className="h-4 w-4 rounded border-gray-300 text-[#9b87f5] focus:ring-[#9b87f5]"
-                                disabled={!field.value?.includes(site.id) && (field.value?.length || 0) >= 6}
-                              />
-                              <label htmlFor={site.id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                {site.name}
-                              </label>
-                            </div>
-                          ))}
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  availableSites={availableSites}
                 />
-
-                <div className="space-y-4">
-                  <FormLabel>Images (Max 3)</FormLabel>
-                  <div className="grid grid-cols-3 gap-4">
-                    {images.map((image, index) => (
-                      <div key={index} className="relative">
-                        <img 
-                          src={image}
-                          alt={`Upload ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-md"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => removeImage(index)}
-                          className="absolute top-2 right-2 h-6 w-6 p-0 rounded-full"
-                        >
-                          ×
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                  {images.length < 3 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => fileInputRef.current?.click()}
-                    >
-                      Upload Image ({3 - images.length} remaining)
-                    </Button>
-                  )}
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleImageUpload}
-                    accept="image/*"
-                    className="hidden"
-                  />
-                </div>
 
                 <Button type="submit" className="w-full" disabled={isSubmitting}>
                   {isSubmitting ? "Submitting..." : "Submit Article"}
