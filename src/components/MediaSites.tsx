@@ -41,7 +41,7 @@ const mediaSites = [
   },
   {
     name: "Authentic Sacrifice",
-    cover: "https://images.unsplash.com/photo-1520187044341-b2f36c9ce96d?w=800&auto=format&fit=crop&q=60",
+    cover: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=800&auto=format&fit=crop&q=60",
     description: "Faith-based platform exploring religious and spiritual topics.",
     type: "Religious"
   },
@@ -53,7 +53,7 @@ const mediaSites = [
   },
   {
     name: "Live Love Hobby",
-    cover: "https://images.unsplash.com/photo-1472289065668-ce650ac443d2?w=800&auto=format&fit=crop&q=60",
+    cover: "https://images.unsplash.com/photo-1481349518771-20055b2a7b24?w=800&auto=format&fit=crop&q=60",
     description: "Platform celebrating hobbies and recreational pursuits.",
     type: "Hobby"
   },
