@@ -1,7 +1,6 @@
-
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { PhoneCall, Mail, MapPin, Timer, Check, CircleCheck } from "lucide-react";
+import { PhoneCall, Mail, MapPin, Timer, Check, CircleCheck, Star } from "lucide-react";
 
 const Sales = () => {
   const navigate = useNavigate();
@@ -14,14 +13,21 @@ const Sales = () => {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <div className="max-w-4xl mx-auto px-4 pt-20 pb-12">
-        <h1 className="text-4xl md:text-5xl font-bold text-center mb-8">
-          I'm about to share something that could dramatically change how you think about{" "}
-          <span className="text-[#9b87f5]">media coverage</span> forever.
-        </h1>
-        <p className="text-xl text-gray-600 text-center mb-8">
-          It's a breakthrough that's so revolutionary, so downright practical, that once you understand it, 
-          you'll wonder how you ever promoted your business the old way.
-        </p>
+        <div className="text-center mb-8">
+          <div className="flex justify-center text-yellow-500 mb-4">
+            {[...Array(5)].map((_, index) => (
+              <Star key={index} className="h-8 w-8 fill-current" />
+            ))}
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-center mb-8">
+            I'm about to share something that could dramatically change how you think about{" "}
+            <span className="text-[#9b87f5]">media coverage</span> forever.
+          </h1>
+          <p className="text-xl text-gray-600 text-center mb-8">
+            It's a breakthrough that's so revolutionary, so downright practical, that once you understand it, 
+            you'll wonder how you ever promoted your business the old way.
+          </p>
+        </div>
       </div>
 
       {/* Main Content */}
@@ -199,4 +205,3 @@ const Sales = () => {
 };
 
 export default Sales;
-
