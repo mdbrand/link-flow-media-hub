@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -9,7 +8,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { LogOut } from 'lucide-react';
 
-// Define the sites map for looking up site names by ID
 const sitesMap = {
   site1: "Authentic Sacrifice",
   site2: "Authority Maximizer",
@@ -136,12 +134,12 @@ const Submissions = () => {
                   <div className="max-w-xs">
                     {submission.selected_sites?.length > 0 ? (
                       <div className="flex flex-wrap gap-1">
-                        {submission.selected_sites.map((siteId: string, index: number) => (
+                        {submission.selected_sites.map((siteName: string, index: number) => (
                           <span
                             key={index}
                             className="inline-flex items-center px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-xs"
                           >
-                            {sitesMap[siteId as keyof typeof sitesMap] || siteId}
+                            {siteName}
                           </span>
                         ))}
                       </div>

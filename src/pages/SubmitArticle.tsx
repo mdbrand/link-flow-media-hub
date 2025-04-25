@@ -109,7 +109,7 @@ const SubmitArticle = () => {
       title: values.title,
       content: values.content,
       images: files ? Array.from(files) : [],
-      selectedSites: values.selectedSites,
+      selectedSites: values.selectedSites.map(siteId => availableSites.find(site => site.id === siteId)?.name || siteId),
     });
     navigate('/refer-friend');
   };
