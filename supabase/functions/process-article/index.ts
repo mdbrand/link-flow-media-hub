@@ -131,9 +131,10 @@ serve(async (req) => {
       })
     )
 
-    console.log("Successfully generated all article versions, sending email...")
+    console.log("Successfully generated all article versions, sending notifications...")
 
-    const emailResult = await resend.emails.send({
+    // Send email to user
+    const userEmailResult = await resend.emails.send({
       from: 'Article Generator <onboarding@resend.dev>',
       to: userEmail,
       subject: `Your Article Versions Are Ready - ${title}`,
@@ -146,9 +147,33 @@ serve(async (req) => {
           `).join('')}
         </ul>
       `
-    })
+    });
 
-    console.log("Email sent successfully:", emailResult)
+    // Send email to admin
+    const adminEmailResult = await resend.emails.send({
+      from: 'Article Generator <onboarding@resend.dev>',
+      to: 'admin@lovable.ai', // Replace with your admin email
+      subject: `New Article Submission - ${title}`,
+      html: `
+        <h1>New Article Submission</h1>
+        <p><strong>Title:</strong> ${title}</p>
+        <p><strong>From:</strong> ${userEmail}</p>
+        <p><strong>Selected Sites:</strong></p>
+        <ul>
+          ${articleVersions.map(v => `
+            <li><strong>${v.site}</strong>: <a href="${v.url}">View Version</a></li>
+          `).join('')}
+        </ul>
+        <hr>
+        <h2>Article Content Preview:</h2>
+        <p>${content.substring(0, 300)}...</p>
+      `
+    });
+
+    console.log("Email notifications sent:", {
+      userEmail: userEmailResult,
+      adminEmail: adminEmailResult
+    });
 
     return new Response(
       JSON.stringify({ success: true, versions: articleVersions }),
@@ -165,4 +190,3 @@ serve(async (req) => {
     )
   }
 })
-
