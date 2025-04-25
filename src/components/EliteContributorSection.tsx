@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +21,7 @@ const EliteContributorSection = () => {
         <div className="mb-12 text-lg text-slate-300 max-w-4xl mx-auto">
           <p className="mb-8">
             Becoming a published contributor is one of the fastest ways to elevate your brand authority, 
-            earn trust, and create real influence in your industry. And with our Media Boost Contributor 
+            earn trust, and create real influence in your industry. And with our Media Boost Elite Contributor 
             program, you can do it at scale.
           </p>
         </div>
