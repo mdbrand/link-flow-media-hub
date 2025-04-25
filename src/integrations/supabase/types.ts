@@ -95,6 +95,7 @@ export type Database = {
           created_at: string
           currency: string | null
           id: string
+          plan_name: string | null
           status: string
           stripe_session_id: string | null
           updated_at: string
@@ -105,6 +106,7 @@ export type Database = {
           created_at?: string
           currency?: string | null
           id?: string
+          plan_name?: string | null
           status?: string
           stripe_session_id?: string | null
           updated_at?: string
@@ -115,6 +117,7 @@ export type Database = {
           created_at?: string
           currency?: string | null
           id?: string
+          plan_name?: string | null
           status?: string
           stripe_session_id?: string | null
           updated_at?: string

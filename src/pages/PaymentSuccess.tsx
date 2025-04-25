@@ -16,27 +16,33 @@ const PaymentSuccess = () => {
     const sendConfirmationEmail = async () => {
       try {
         // Get order details from Supabase
-        const { data: orders, error: orderError } = await supabase
+        const { data, error } = await supabase
           .from('orders')
           .select('plan_name')
           .eq('stripe_session_id', sessionId)
           .single();
 
-        if (orderError) {
-          console.error('Error fetching order:', orderError);
+        if (error) {
+          console.error('Error fetching order:', error);
+          return;
+        }
+
+        // Make sure we have plan_name data before proceeding
+        if (!data || !data.plan_name) {
+          console.error('No plan name found for this order');
           return;
         }
 
         // Send confirmation email
-        const { error } = await supabase.functions.invoke('send-payment-confirmation', {
+        const { error: emailError } = await supabase.functions.invoke('send-payment-confirmation', {
           body: { 
             email: 'guest@example.com', // For now using a default email since user might not be signed in
-            planName: orders.plan_name 
+            planName: data.plan_name 
           }
         });
 
-        if (error) {
-          console.error('Error sending confirmation email:', error);
+        if (emailError) {
+          console.error('Error sending confirmation email:', emailError);
         }
       } catch (error) {
         console.error('Error in confirmation process:', error);
