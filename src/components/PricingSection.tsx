@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Check, CreditCard, Sparkles } from "lucide-react";
+import { Check, CreditCard, Sparkles, Slash } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 
@@ -109,9 +109,12 @@ const PricingSection = () => {
               <CardHeader>
                 <CardTitle>{tier.name}</CardTitle>
                 <CardDescription>{tier.description}</CardDescription>
-                <div className="mt-4">
-                  <span className="text-3xl font-bold">{tier.price}</span>
-                  <span className="text-gray-500 ml-1">one-time</span>
+                <div className="mt-4 flex items-center">
+                  <span className="text-3xl font-bold relative">
+                    {tier.price}
+                    <Slash className="absolute top-1/2 left-0 right-0 text-gray-500 h-6 w-full -rotate-12" />
+                  </span>
+                  <span className="text-gray-500 ml-2">one-time</span>
                 </div>
               </CardHeader>
               <CardContent>
@@ -144,4 +147,3 @@ const PricingSection = () => {
 };
 
 export default PricingSection;
-
