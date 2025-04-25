@@ -4,10 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useArticles } from '@/hooks/useArticles';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from "@/hooks/use-toast";
-import { useSubmissionLimit } from "@/hooks/useSubmissionLimit";
 import Header from '@/components/Header';
-import { LoadingState } from '@/components/article/LoadingState';
-import { SubmissionLimitMessage } from '@/components/article/SubmissionLimitMessage';
 import { ArticleForm, availableSites } from '@/components/article/ArticleForm';
 
 const SubmitArticle = () => {
@@ -15,7 +12,6 @@ const SubmitArticle = () => {
   const { user, loading } = useAuth();
   const { submitArticle, isSubmitting } = useArticles();
   const { toast } = useToast();
-  const { canSubmit, isLoading: checkingLimit, remainingSubmissions, totalPaid } = useSubmissionLimit();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -29,27 +25,17 @@ const SubmitArticle = () => {
     }
   }, [user, loading, navigate, toast]);
 
-  if (loading || checkingLimit) {
-    return <LoadingState />;
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
   if (!user && !loading) {
     return null;
   }
-  
-  if (!canSubmit && !checkingLimit) {
-    return (
-      <>
-        <Header />
-        <SubmissionLimitMessage totalPaid={totalPaid} />
-      </>
-    );
-  }
 
   const handleSubmit = async (values: any) => {
     // Extract the image files from object URLs
     const extractedFiles = values.images.map((url: string) => {
-      // Fetch the file from the object URL
       return fetch(url).then(r => r.blob()).then(blob => 
         new File([blob], `article-image-${Math.random().toString(36).substring(7)}.jpg`, { type: blob.type })
       );
@@ -79,7 +65,7 @@ const SubmitArticle = () => {
         <ArticleForm 
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
-          remainingSubmissions={remainingSubmissions}
+          remainingSubmissions={999} // Set a high number to bypass the limit
         />
       </div>
     </div>
