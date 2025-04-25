@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Globe } from "lucide-react";
@@ -53,8 +54,8 @@ const mediaSites = [
   },
   {
     name: "Live Love Hobby",
-    cover: "https://images.unsplash.com/photo-1481349518771-20055b2a7b24?w=800&auto=format&fit=crop&q=60",
-    description: "Platform celebrating hobbies and recreational pursuits.",
+    cover: "/lovable-uploads/1ccec23d-4f05-4a22-a4c5-fd34f7fef2a7.png",
+    description: "Platform celebrating hobbies, crafting, and DIY pursuits with creative inspiration.",
     type: "Hobby"
   },
   {
