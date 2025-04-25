@@ -55,26 +55,26 @@ const PaymentSuccess = () => {
           console.log("Updating order status to paid");
           
           // Update order with user_id and status='paid' if user is logged in
+          const updateData: any = { status: 'paid' };
           if (user) {
-            const { error: updateError } = await supabase
-              .from('orders')
-              .update({ 
-                user_id: user.id,
-                status: 'paid' 
-              })
-              .eq('id', data.id);
+            updateData.user_id = user.id;
+          }
+          
+          const { error: updateError } = await supabase
+            .from('orders')
+            .update(updateData)
+            .eq('id', data.id);
 
-            if (updateError) {
-              console.error('Error updating order:', updateError);
-              setError("Could not update your order status. Please contact support.");
-              return;
-            }
-            
+          if (updateError) {
+            console.error('Error updating order:', updateError);
+            setError("Could not update your order status. Please contact support.");
+            return;
+          }
+          
+          if (user) {
             console.log("Order updated successfully with user ID:", user.id);
           } else {
-            console.log("User not logged in - storing session ID in localStorage");
-            // Store the session ID in localStorage for later association
-            localStorage.setItem('pendingOrderSessionId', sessionId);
+            console.log("Order marked as paid, no user is logged in");
           }
         } else {
           // If order is already paid but not associated with user, associate it
@@ -95,17 +95,27 @@ const PaymentSuccess = () => {
           }
         }
 
-        // Send confirmation email
-        const { error: emailError } = await supabase.functions.invoke('send-payment-confirmation', {
-          body: { 
-            email: user?.email || 'guest@example.com',
-            planName: data.plan_name 
-          }
-        });
+        // Store the session ID in localStorage for later association
+        if (!user) {
+          console.log("User not logged in - storing session ID in localStorage");
+          localStorage.setItem('pendingOrderSessionId', sessionId);
+        }
 
-        if (emailError) {
-          console.error('Error sending confirmation email:', emailError);
-          // Don't block process for email errors
+        // Send confirmation email
+        try {
+          const { error: emailError } = await supabase.functions.invoke('send-payment-confirmation', {
+            body: { 
+              email: user?.email || 'guest@example.com',
+              planName: data.plan_name 
+            }
+          });
+
+          if (emailError) {
+            console.error('Error sending confirmation email:', emailError);
+            // Don't block process for email errors
+          }
+        } catch (emailErr) {
+          console.error("Error invoking email function:", emailErr);
         }
         
         toast({

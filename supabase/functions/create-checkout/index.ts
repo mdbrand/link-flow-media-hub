@@ -85,7 +85,8 @@ serve(async (req) => {
       const orderData = {
         stripe_session_id: session.id,
         status: 'pending',
-        plan_name: planName
+        plan_name: planName,
+        amount: 2900 // $29.00 in cents
       };
       
       if (userId) {

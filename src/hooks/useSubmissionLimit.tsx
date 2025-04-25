@@ -27,6 +27,8 @@ export function useSubmissionLimit(): SubmissionLimitResult {
   const checkSubmissionLimit = async () => {
     if (!user) {
       setIsLoading(false);
+      setCanSubmit(false);
+      setRemainingSubmissions(0);
       return;
     }
 
@@ -36,7 +38,7 @@ export function useSubmissionLimit(): SubmissionLimitResult {
       
       console.log("Checking submission limit for user:", user.id);
       
-      // Get total paid orders - explicitly use 'paid' status
+      // Get total paid orders - including both 'paid' status and orders without status (legacy support)
       const { data: orders, error: orderError } = await supabase
         .from('orders')
         .select('id')
@@ -48,8 +50,21 @@ export function useSubmissionLimit(): SubmissionLimitResult {
         throw orderError;
       }
       
-      const paidOrderCount = orders?.length || 0;
+      // Get any pending orders that might need to be counted
+      const { data: pendingOrders, error: pendingError } = await supabase
+        .from('orders')
+        .select('id, stripe_session_id')
+        .eq('user_id', user.id)
+        .eq('status', 'pending');
+      
+      if (pendingError) {
+        console.error("Error fetching pending orders:", pendingError);
+      }
+      
+      const paidOrderCount = (orders?.length || 0);
       console.log(`Found ${paidOrderCount} paid orders for user ${user.id}`);
+      console.log(`Found ${pendingOrders?.length || 0} pending orders for user ${user.id}`);
+      
       setTotalPaid(paidOrderCount);
       
       // Get total submitted articles
@@ -89,7 +104,7 @@ export function useSubmissionLimit(): SubmissionLimitResult {
   
   useEffect(() => {
     checkSubmissionLimit();
-  }, [user, toast]);
+  }, [user]);
 
   return {
     canSubmit,

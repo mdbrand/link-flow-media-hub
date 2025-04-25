@@ -23,6 +23,7 @@ export const SubmissionLimitMessage = ({ totalPaid }: SubmissionLimitMessageProp
     try {
       await refreshSubmissionStatus();
       toast({
+        title: "Status Updated",
         description: "Submission status refreshed. If you made a recent purchase, try submitting an article now.",
       });
       // Add a small delay before refreshing the page
@@ -69,9 +70,9 @@ export const SubmissionLimitMessage = ({ totalPaid }: SubmissionLimitMessageProp
                 If you recently made a payment and are still seeing this message, click the button below to refresh your submission status.
               </p>
               <Button 
-                variant="outline" 
-                size="sm" 
-                className="text-amber-700 border-amber-300"
+                variant="default" 
+                size="lg" 
+                className="w-full"
                 onClick={handleRefresh}
                 disabled={isRefreshing}
               >
