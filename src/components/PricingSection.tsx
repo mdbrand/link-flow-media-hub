@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Check, CreditCard, Sparkles, BadgePercent, X } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -156,7 +157,7 @@ const PricingSection = () => {
                   disabled={true}
                 >
                   <X className="mr-2 h-4 w-4" />
-                  Unavailable During Launch Special
+                  Currently Unavailable
                 </Button>
               </CardFooter>
             </Card>
