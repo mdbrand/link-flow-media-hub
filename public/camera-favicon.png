@@ -1,0 +1,19 @@
+
+import React from 'react';
+import { Camera } from 'lucide-react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import sharp from 'sharp';
+
+const createFavicon = async () => {
+  const svgString = renderToStaticMarkup(
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="256" height="256">
+      <Camera color="#007bff" strokeWidth={1.5} />
+    </svg>
+  );
+
+  await sharp(Buffer.from(svgString))
+    .png()
+    .toFile('public/camera-favicon.png');
+};
+
+createFavicon();
