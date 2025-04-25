@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { Client } from "npm:@notionhq/client"
 import OpenAI from "https://esm.sh/openai@4.20.1"
@@ -21,7 +20,6 @@ const resend = new Resend(Deno.env.get('RESEND_API_KEY'))
 
 const databaseId = Deno.env.get('NOTION_DATABASE_ID') as string
 
-// Voice and tone guidelines for each site
 const siteGuidelines = {
   "Authentic Sacrifice": "Compassionate, contemplative, and purposeful. Write in a warm yet reverent tone, balancing spiritual depth with practical guidance. Use measured pacing with occasional powerful statements that resonate emotionally. Use accessible yet meaningful vocabulary, avoiding overly technical theological terms while maintaining spiritual authenticity.",
   "Authority Maximizer": "Confident, decisive, and strategic. Write as a seasoned expert who has 'been there, done that.' Use direct, action-oriented language with powerful verbs and minimal qualifiers. Include occasional bold statements and challenges to the reader. Mix concise, punchy sentences with deeper insights that demonstrate thought leadership.",
@@ -35,6 +33,12 @@ const siteGuidelines = {
   "Thought Leaders Ethos": "Insightful, visionary, and intellectually stimulating. Write like forward-thinkers shaping the future. Use thought-provoking questions and conceptual frameworks. Balance abstract ideas with practical applications. Vary between concise wisdom and expanded explorations of complex concepts.",
   "Trending Consumerism": "Informative, current, and discerning. Write like a savvy consumer advocate who understands market forces and personal needs. Use balanced evaluations with clear recommendations. Balance trend analysis with practical consumer advice. Include current product terminology with accessible explanations.",
   "HKlub Fitness": "Motivational, empowering, and knowledgeable. Write like a supportive personal trainer combining expertise with encouragement. Use direct, energetic language that inspires action. Balance scientific fitness information with accessible explanations. Include goal-oriented language and celebrate progress."
+}
+
+function truncateContent(content: string, maxLength: number = 2000): string {
+  return content.length > maxLength 
+    ? content.substring(0, maxLength) + '... (content truncated)' 
+    : content;
 }
 
 async function generateUniqueArticle(originalContent: string, siteName: string) {
@@ -57,11 +61,11 @@ Make sure the rewritten article:
 5. Is unique and different from other versions`
 
   const completion = await openai.chat.completions.create({
-    model: "gpt-4o",
+    model: "gpt-4o-mini",
     messages: [
       { 
         role: "system", 
-        content: "You are an expert content writer who adapts articles for different websites while maintaining their core message but making them unique." 
+        content: "You are an expert content writer who adapts articles for different websites while maintaining their core message." 
       },
       { role: "user", content: prompt }
     ],
@@ -71,6 +75,8 @@ Make sure the rewritten article:
 }
 
 async function createNotionPage(title: string, content: string, siteName: string) {
+  const truncatedContent = truncateContent(content);
+
   const response = await notion.pages.create({
     parent: { database_id: databaseId },
     properties: {
@@ -83,7 +89,7 @@ async function createNotionPage(title: string, content: string, siteName: string
         object: 'block',
         type: 'paragraph',
         paragraph: {
-          rich_text: [{ text: { content } }]
+          rich_text: [{ text: { content: truncatedContent } }]
         }
       }
     ]
@@ -110,7 +116,6 @@ serve(async (req) => {
       })
     )
 
-    // Send email with Notion links
     await resend.emails.send({
       from: 'Article Generator <onboarding@resend.dev>',
       to: userEmail,
