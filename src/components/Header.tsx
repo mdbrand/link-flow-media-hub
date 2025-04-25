@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogIn } from "lucide-react";
@@ -15,10 +14,18 @@ const Header = () => {
 
   const handleNavigation = (sectionId: string) => {
     if (location.pathname !== '/') {
-      navigate('/', { state: { scrollTo: sectionId } });
+      navigate('/', { 
+        state: { 
+          scrollTo: sectionId || 'top' 
+        } 
+      });
     } else {
-      const section = document.getElementById(sectionId);
-      section?.scrollIntoView({ behavior: 'smooth' });
+      if (sectionId) {
+        const section = document.getElementById(sectionId);
+        section?.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
     setIsMenuOpen(false);
   };
@@ -35,7 +42,13 @@ const Header = () => {
     <header className="w-full py-4 px-4 md:px-6 bg-white sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center">
-          <Link to="/" className="text-2xl font-bold text-[#9b87f5]">MediaBoost</Link>
+          <Link 
+            to="/" 
+            onClick={() => handleNavigation('')}
+            className="text-2xl font-bold text-[#9b87f5]"
+          >
+            MediaBoost
+          </Link>
         </div>
         
         <div className="md:hidden">

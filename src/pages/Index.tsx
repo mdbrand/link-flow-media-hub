@@ -19,9 +19,14 @@ const Index = () => {
   useEffect(() => {
     // Handle scroll to section when navigating from another page
     if (location.state?.scrollTo) {
-      const section = document.getElementById(location.state.scrollTo);
-      if (section) {
-        section.scrollIntoView({ behavior: 'smooth' });
+      if (location.state.scrollTo === 'top') {
+        // Scroll to top of the page
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        const section = document.getElementById(location.state.scrollTo);
+        if (section) {
+          section.scrollIntoView({ behavior: 'smooth' });
+        }
       }
       // Clear the state to prevent unwanted scrolling
       window.history.replaceState({}, '');
@@ -48,3 +53,4 @@ const Index = () => {
 };
 
 export default Index;
+
