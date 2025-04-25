@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Globe } from "lucide-react";
@@ -94,10 +95,9 @@ const MediaSites = () => {
     <section id="media-sites" className="py-16 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Multiply Your Media Presence And Get Featured on <span className="text-[#9b87f5]">6 Top Sites</span> With a Single Submission</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Stop Getting Ignored by Publications and Build Instant Credibility</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Our network includes the most respected publications across various industries,
-            giving your content maximum exposure to your target audience.
+            Publish On Your Schedule And Get Strategic Media Placements When You Need Them Most
           </p>
         </div>
         
@@ -139,3 +139,4 @@ const MediaSites = () => {
 };
 
 export default MediaSites;
+
