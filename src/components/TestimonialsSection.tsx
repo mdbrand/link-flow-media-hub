@@ -6,33 +6,29 @@ import { Star } from "lucide-react";
 
 const testimonials = [
   {
-    name: "Sarah Johnson",
+    name: "Sarah J.",
     role: "Marketing Director",
-    company: "TechStart Inc.",
     image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=150&h=150&q=80",
     rating: 5,
     text: "MediaBoost helped us get featured on sites we never thought possible. Our company's credibility soared, and we saw a 40% increase in business inquiries within just two weeks of publication."
   },
   {
-    name: "David Chen",
+    name: "David C.",
     role: "CEO",
-    company: "Growth Ventures",
     image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=150&h=150&q=80",
     rating: 5,
     text: "The AI technology they use is truly remarkable. One article we submitted was adapted perfectly for each publication, making it feel native to each site. The results exceeded our expectations."
   },
   {
-    name: "Maria Rodriguez",
+    name: "Maria R.",
     role: "Founder",
-    company: "Wellness Revolution",
     image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&w=150&h=150&q=80",
-    rating: 4,
+    rating: 5,
     text: "As a small business owner, I was skeptical about the investment, but MediaBoost delivered real results. Being featured across multiple respected publications gave us the credibility boost we needed."
   },
   {
-    name: "James Williams",
+    name: "James W.",
     role: "Sales Director",
-    company: "Enterprise Solutions",
     image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=150&h=150&q=80",
     rating: 5,
     text: "The process was seamless from start to finish. Their team kept us updated at every stage, and the quality of the adapted content was outstanding. We'll definitely be using their services again."
@@ -58,11 +54,8 @@ const TestimonialsSection = () => {
                   <Card className="h-full">
                     <CardContent className="p-6">
                       <div className="flex items-center mb-4">
-                        {[...Array(testimonial.rating)].map((_, i) => (
+                        {[...Array(5)].map((_, i) => (
                           <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                        ))}
-                        {[...Array(5 - testimonial.rating)].map((_, i) => (
-                          <Star key={i + testimonial.rating} className="h-5 w-5 text-gray-300" />
                         ))}
                       </div>
                       <p className="italic mb-6 text-gray-700">{testimonial.text}</p>
@@ -74,7 +67,7 @@ const TestimonialsSection = () => {
                         />
                         <div>
                           <h4 className="font-bold">{testimonial.name}</h4>
-                          <p className="text-sm text-gray-600">{testimonial.role}, {testimonial.company}</p>
+                          <p className="text-sm text-gray-600">{testimonial.role}</p>
                         </div>
                       </div>
                     </CardContent>
