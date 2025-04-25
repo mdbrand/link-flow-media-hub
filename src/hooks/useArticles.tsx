@@ -19,6 +19,8 @@ export function useArticles() {
   const submitArticle = async ({ title, content, images = [], selectedSites = [] }: ArticleInput) => {
     if (!user) throw new Error("User must be authenticated to submit an article");
     
+    console.log("Starting article submission process");
+    
     // First save the article to Supabase
     const { data: article, error: articleError } = await supabase
       .from('articles')
@@ -31,10 +33,16 @@ export function useArticles() {
       .select()
       .single();
 
-    if (articleError) throw articleError;
+    if (articleError) {
+      console.error("Error saving article to database:", articleError);
+      throw articleError;
+    }
+
+    console.log("Article saved to database successfully");
 
     // Handle image uploads
     if (images.length > 0) {
+      console.log(`Uploading ${images.length} images`);
       for (const [index, image] of images.entries()) {
         const fileExt = image.name.split('.').pop();
         const sanitizedTitle = sanitizeFileName(title);
@@ -44,15 +52,20 @@ export function useArticles() {
           .from('article-images')
           .upload(filePath, image);
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error(`Error uploading image ${index + 1}:`, uploadError);
+          throw uploadError;
+        }
 
         await supabase
           .from('article_images')
           .insert([{ article_id: article.id, storage_path: filePath }]);
       }
+      console.log("All images uploaded successfully");
     }
 
     // Process with AI and create Notion pages
+    console.log("Calling process-article edge function");
     const { data, error: processError } = await supabase.functions.invoke('process-article', {
       body: {
         title,
@@ -67,9 +80,7 @@ export function useArticles() {
       throw processError;
     }
 
-    // Log the Notion page URLs for debugging
-    console.log('Notion Page URLs:', data?.versions?.map(v => v.url));
-
+    console.log('Edge function response:', data);
     return { article, notionUrls: data?.versions?.map(v => v.url) };
   };
 
@@ -79,16 +90,14 @@ export function useArticles() {
       queryClient.invalidateQueries({ queryKey: ['articles'] });
       toast({
         title: "Article Submitted Successfully",
-        description: "Your article is being processed. You'll receive an email with the AI-generated versions soon.",
+        description: "Your article has been submitted. Check your email for confirmation.",
       });
 
       // If no email, show the Notion URLs in a toast
       if (result.notionUrls && result.notionUrls.length > 0) {
         toast({
           title: "Notion Page Links",
-          description: result.notionUrls.map((url, index) => 
-            `Site ${index + 1}: ${url}`
-          ).join('\n'),
+          description: "Links to your article versions have been sent to your email.",
           duration: 10000 // Show for 10 seconds
         });
       }

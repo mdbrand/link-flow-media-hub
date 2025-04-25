@@ -109,7 +109,7 @@ async function createNotionPage(title: string, content: string, siteName: string
     return response.url;
   } catch (error) {
     console.error(`Error creating Notion page for ${siteName}:`, error);
-    throw error;
+    return `Error creating Notion page: ${error.message}`;
   }
 }
 
@@ -123,64 +123,114 @@ serve(async (req) => {
     
     console.log("Starting article processing for sites:", selectedSites)
     
-    const articleVersions = await Promise.all(
-      selectedSites.map(async (site: string) => {
-        const uniqueContent = await generateUniqueArticle(content, site)
-        const notionUrl = await createNotionPage(title, uniqueContent, site)
-        return { site, url: notionUrl }
-      })
-    )
+    let generatedContents = [];
+    let articleVersions = [];
+    
+    try {
+      // First, generate all the unique content
+      generatedContents = await Promise.all(
+        selectedSites.map(async (site: string) => {
+          const uniqueContent = await generateUniqueArticle(content, site);
+          return { site, content: uniqueContent };
+        })
+      );
+      
+      // Then try to create Notion pages
+      articleVersions = await Promise.all(
+        generatedContents.map(async ({ site, content: uniqueContent }) => {
+          try {
+            const notionUrl = await createNotionPage(title, uniqueContent, site);
+            return { site, url: notionUrl };
+          } catch (notionError) {
+            console.error(`Error with Notion for site ${site}:`, notionError);
+            return { 
+              site, 
+              url: "Notion page creation failed. Please check your Notion API key and database ID." 
+            };
+          }
+        })
+      );
+    } catch (processingError) {
+      console.error("Error during article processing:", processingError);
+      // We'll continue to send emails even if there was an error
+    }
 
-    console.log("Successfully generated all article versions, sending notifications...")
+    console.log("Sending email notifications...");
 
-    // Send email to user
-    const userEmailResult = await resend.emails.send({
-      from: 'Article Generator <onboarding@resend.dev>',
-      to: userEmail,
-      subject: `Your Article Versions Are Ready - ${title}`,
-      html: `
-        <h1>Your AI-Generated Article Versions Are Ready</h1>
-        <p>Here are the Notion pages for each version of your article "${title}":</p>
-        <ul>
-          ${articleVersions.map(v => `
-            <li><strong>${v.site}</strong>: <a href="${v.url}">View Article</a></li>
-          `).join('')}
-        </ul>
-      `
-    });
+    try {
+      // Send email to user
+      const userEmailResult = await resend.emails.send({
+        from: 'Article Generator <onboarding@resend.dev>',
+        to: userEmail,
+        subject: `Your Article Submission - ${title}`,
+        html: `
+          <h1>Thank You for Your Article Submission</h1>
+          <p>We've received your article titled "${title}" and it's being processed.</p>
+          ${articleVersions.length > 0 ? `
+            <p>Here are links to your article versions:</p>
+            <ul>
+              ${articleVersions.map(v => `
+                <li><strong>${v.site}</strong>: <a href="${v.url}">View Article</a></li>
+              `).join('')}
+            </ul>
+          ` : `
+            <p>We're currently processing your article for the selected sites. You'll receive another email once the processing is complete.</p>
+          `}
+        `
+      });
 
-    // Send email to admin
-    const adminEmailResult = await resend.emails.send({
-      from: 'Article Generator <onboarding@resend.dev>',
-      to: 'admin@lovable.ai', // Replace with your admin email
-      subject: `New Article Submission - ${title}`,
-      html: `
-        <h1>New Article Submission</h1>
-        <p><strong>Title:</strong> ${title}</p>
-        <p><strong>From:</strong> ${userEmail}</p>
-        <p><strong>Selected Sites:</strong></p>
-        <ul>
-          ${articleVersions.map(v => `
-            <li><strong>${v.site}</strong>: <a href="${v.url}">View Version</a></li>
-          `).join('')}
-        </ul>
-        <hr>
-        <h2>Article Content Preview:</h2>
-        <p>${content.substring(0, 300)}...</p>
-      `
-    });
+      console.log("User email sent:", userEmailResult);
 
-    console.log("Email notifications sent:", {
-      userEmail: userEmailResult,
-      adminEmail: adminEmailResult
-    });
+      // Send email to admin
+      const adminEmailResult = await resend.emails.send({
+        from: 'Article Generator <onboarding@resend.dev>',
+        to: 'admin@lovable.ai', // Replace with your admin email
+        subject: `New Article Submission - ${title}`,
+        html: `
+          <h1>New Article Submission</h1>
+          <p><strong>Title:</strong> ${title}</p>
+          <p><strong>From:</strong> ${userEmail}</p>
+          <p><strong>Selected Sites:</strong> ${selectedSites.join(', ')}</p>
+          <hr>
+          <h2>Article Content Preview:</h2>
+          <p>${content.substring(0, 300)}...</p>
+        `
+      });
+
+      console.log("Admin email sent:", adminEmailResult);
+    } catch (emailError) {
+      console.error("Error sending emails:", emailError);
+    }
 
     return new Response(
-      JSON.stringify({ success: true, versions: articleVersions }),
+      JSON.stringify({ 
+        success: true, 
+        versions: articleVersions,
+        message: "Article submitted successfully. Email notifications have been sent." 
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
     console.error('Error processing article:', error)
+    
+    // Try to send error notification
+    try {
+      const { title, userEmail } = await req.json();
+      await resend.emails.send({
+        from: 'Article Generator <onboarding@resend.dev>',
+        to: userEmail,
+        subject: `Issue with your article submission - ${title}`,
+        html: `
+          <h1>We encountered an issue with your submission</h1>
+          <p>There was a technical problem processing your article "${title}".</p>
+          <p>Our team has been notified and will look into this as soon as possible.</p>
+          <p>Please try again later or contact support if the issue persists.</p>
+        `
+      });
+    } catch (emailError) {
+      console.error('Error sending error notification:', emailError);
+    }
+    
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
