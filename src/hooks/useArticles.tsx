@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -25,6 +26,7 @@ export function useArticles() {
   const submitArticle = async ({ title, content, images = [], selectedSites = [] }: ArticleInput) => {
     if (!user) throw new Error("User must be authenticated to submit an article");
     
+    // First save the article to Supabase
     const { data: article, error: articleError } = await supabase
       .from('articles')
       .insert({ 
@@ -38,6 +40,7 @@ export function useArticles() {
 
     if (articleError) throw articleError;
 
+    // Handle image uploads
     if (images.length > 0) {
       for (const [index, image] of images.entries()) {
         const fileExt = image.name.split('.').pop();
@@ -56,6 +59,18 @@ export function useArticles() {
       }
     }
 
+    // Process with AI and create Notion pages
+    const { error: processError } = await supabase.functions.invoke('process-article', {
+      body: {
+        title,
+        content,
+        selectedSites,
+        userEmail: user.email
+      }
+    });
+
+    if (processError) throw processError;
+
     return article;
   };
 
@@ -64,8 +79,8 @@ export function useArticles() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['articles'] });
       toast({
-        title: "Success",
-        description: "Your article has been submitted successfully.",
+        title: "Article Submitted Successfully",
+        description: "Your article is being processed. You'll receive an email with the AI-generated versions soon.",
       });
     },
     onError: (error) => {
