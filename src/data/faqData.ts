@@ -1,28 +1,47 @@
 
 export const faqs = [
   {
-    question: "How can you guarantee that I get published?",
-    answer: "We have established partnerships with premium media sites in various niches. Our AI technology adapts your content to match each site's editorial guidelines and style requirements, which is then reviewed by our editorial team before submission to our partner publications."
+    question: "Are these real sites with SEO benefits?",
+    answer: "Absolutely. Each publication in our network is a real, indexed website with growing domain authority (DA/DR). We regularly update site metrics and encourage you to use tools like Ahrefs, Moz, or Semrush to verify."
   },
   {
-    question: "Do I need to write different articles for each site?",
-    answer: "No, that's the beauty of our service! You only need to submit one high-quality article. Our AI technology will adapt and optimize that article for each publication while maintaining your core message and unique insights."
+    question: "Will I see my article before it goes live?",
+    answer: "Yes! You'll have a chance to review the AI-adapted versions before anything is published. Depending on your plan, you can request revisions."
   },
   {
-    question: "How do I select which sites to publish on?",
-    answer: "During the article submission process, you'll be able to choose the 6 media sites where you'd like your content to be published. We offer a diverse selection of sites across different industries and niches."
+    question: "How good is your AI, really?",
+    answer: "Our proprietary AI doesn't just reword, it strategically adapts your article to match each publication's tone, audience, and formatting requirements. Then our human editors review it for grammar, clarity, and brand consistency before it ever hits the internet."
   },
   {
-    question: "How long does the entire process take?",
-    answer: "The timeline depends on the package you choose. Our Starter package has a 30-day publishing window, Growth package 14 days, and Enterprise package just 7 days. This is the maximum time it takes to get your content published across all included sites."
+    question: "Who is this best for?",
+    answer: "Our platform was built for: Entrepreneurs ready to build brand authority, Agencies who want scalable client wins, Coaches, consultants, authors, PR firms, and anyone who needs visibility on a budget."
   },
   {
-    question: "What types of content can I submit?",
-    answer: "We accept thought leadership articles, industry analyses, how-to guides, and opinion pieces. Content should be informative and valuable to readers rather than overtly promotional. Our team can help guide you on creating appropriate content during onboarding."
+    question: "How fast will I get published?",
+    answer: "Depending on your plan: Starter: 30-day window, Growth: 21-day window, Enterprise: 14-day VIP window. You can even request a preferred date within your plan's range, perfect for launches or campaigns."
   },
   {
-    question: "Is it really only $97 for this deal?",
-    answer: "Yes, it is only $97 to have a unique article published across our media network sites. Our AI will create a brand new article based on the single article you submit, tailoring it to fit the theme of each website to ensure relevance and alignment. It's an exceptional value, but this limited-time offer won't last long."
+    question: "Will this actually help my SEO or get me leads?",
+    answer: "Short answer: Yes. While we can't guarantee rankings (no one legit can), these articles help with: Domain authority from media backlinks, Google indexing and search visibility, Social proof that drives conversions, Referral traffic from audiences already visiting these sites."
+  },
+  {
+    question: "Can I publish for my clients or use multiple bylines?",
+    answer: "Absolutely. If you're an agency, ghostwriter, or PR team, you can add extra bylines for just $497 each (only available to Elite Contributors). This lets you publish for different clients under different names, all managed under your single account."
+  },
+  {
+    question: "What kind of content is allowed?",
+    answer: "You can submit content on nearly any professional topic, business, marketing, thought leadership, entrepreneurship, wellness, lifestyle, etc. We review everything to ensure it meets platform standards. Restricted topics include: hate speech, adult content, unsubstantiated medical claims, or anything that violates publishing guidelines."
+  },
+  {
+    question: "Is it really just $97?",
+    answer: "Yes. Our current promo gives you 6 media placements of your choice, AI-adapted, with priority review, for just $97. No catch. No upsell traps. Just visibility you control. But only for a Limited Time!!"
+  },
+  {
+    question: "Do I keep the rights to my content?",
+    answer: "Absolutely. You own your content. We simply help distribute it across our network with full transparency and your byline front and center."
+  },
+  {
+    question: "What if I'm not happy?",
+    answer: "If your content isn't accepted, we'll work with you to make it right. We want long term success stories, not fly by night forgetables."
   }
 ];
-
