@@ -81,7 +81,7 @@ const Header = () => {
                 </Button>
               </Link>
               <Button 
-                onClick={() => scrollToSection('pricing')}
+                onClick={() => handleNavigation('pricing')}
                 className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white"
               >
                 Start Here
@@ -133,7 +133,7 @@ const Header = () => {
                   </Link>
                   <Button 
                     onClick={() => {
-                      scrollToSection('pricing');
+                      handleNavigation('pricing');
                       setIsMenuOpen(false);
                     }}
                     className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white w-full"

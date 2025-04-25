@@ -1,5 +1,6 @@
 
-import { useEffect, useLocation } from 'react';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import MediaSites from "../components/MediaSites";
