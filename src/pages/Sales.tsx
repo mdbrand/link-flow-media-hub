@@ -1,3 +1,4 @@
+import React from 'react';
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { PhoneCall, Mail, MapPin, Timer, Check, CircleCheck, Star } from "lucide-react";
@@ -23,8 +24,8 @@ const Sales = () => {
             you'll wonder how you ever promoted your business the old way.
           </p>
           
-          {/* Stars added here, between the subtitle and the next section */}
-          <div className="flex justify-center text-yellow-500 my-6">
+          {/* Stars centered between subtitle and next section */}
+          <div className="flex justify-center text-yellow-500 my-12">
             {[...Array(5)].map((_, index) => (
               <Star key={index} className="h-8 w-8 fill-current mx-1" />
             ))}
