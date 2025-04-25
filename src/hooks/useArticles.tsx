@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -10,6 +9,13 @@ interface ArticleInput {
   images?: File[];
   selectedSites?: string[];
 }
+
+const sanitizeFileName = (title: string): string => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric chars with hyphens
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+};
 
 export function useArticles() {
   const { toast } = useToast();
@@ -33,9 +39,10 @@ export function useArticles() {
     if (articleError) throw articleError;
 
     if (images.length > 0) {
-      for (const image of images) {
+      for (const [index, image] of images.entries()) {
         const fileExt = image.name.split('.').pop();
-        const filePath = `${article.id}/${Math.random()}.${fileExt}`;
+        const sanitizedTitle = sanitizeFileName(title);
+        const filePath = `${article.id}/${sanitizedTitle}-${index + 1}.${fileExt}`;
 
         const { error: uploadError } = await supabase.storage
           .from('article-images')
