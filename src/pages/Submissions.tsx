@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { LogOut } from 'lucide-react';
+import { LogOut, Home } from 'lucide-react';
 
 const sitesMap = {
   site1: "Authentic Sacrifice",
@@ -93,14 +93,24 @@ const Submissions = () => {
     <div className="container max-w-5xl mx-auto py-8 px-4">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">My Submissions</h1>
-        <Button 
-          onClick={handleSignOut} 
-          variant="outline"
-          className="border-red-500 text-red-500 hover:bg-red-50"
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          Sign Out
-        </Button>
+        <div className="flex gap-4">
+          <Button 
+            onClick={() => navigate('/')} 
+            variant="outline"
+            className="hover:bg-[#9b87f5] hover:text-white"
+          >
+            <Home className="mr-2 h-4 w-4" />
+            Home
+          </Button>
+          <Button 
+            onClick={handleSignOut} 
+            variant="outline"
+            className="border-red-500 text-red-500 hover:bg-red-50"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Sign Out
+          </Button>
+        </div>
       </div>
 
       {submissions.length === 0 ? (
