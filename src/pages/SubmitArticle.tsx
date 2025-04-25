@@ -8,7 +8,7 @@ import { useSubmissionLimit } from "@/hooks/useSubmissionLimit";
 import Header from '@/components/Header';
 import { LoadingState } from '@/components/article/LoadingState';
 import { SubmissionLimitMessage } from '@/components/article/SubmissionLimitMessage';
-import { ArticleForm } from '@/components/article/ArticleForm';
+import { ArticleForm, availableSites } from '@/components/article/ArticleForm';
 
 const SubmitArticle = () => {
   const navigate = useNavigate();
