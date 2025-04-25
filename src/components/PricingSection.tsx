@@ -1,6 +1,5 @@
-
 import { Button } from "@/components/ui/button";
-import { Check, CreditCard, Sparkles, BadgePercent } from "lucide-react";
+import { Check, CreditCard, Sparkles, BadgePercent, X } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 
@@ -134,10 +133,7 @@ const PricingSection = () => {
                 <CardTitle>{tier.name}</CardTitle>
                 <CardDescription>{tier.description}</CardDescription>
                 <div className="mt-4 flex items-center">
-                  <div className="relative inline-block">
-                    <span className="text-3xl font-bold text-gray-300 line-through decoration-red-500 decoration-4">{tier.price}</span>
-                    <span className="text-black text-3xl font-bold ml-2">$97</span>
-                  </div>
+                  <span className="text-3xl font-bold">{tier.price}</span>
                   <span className="text-gray-500 ml-2">one-time</span>
                 </div>
               </CardHeader>
@@ -157,9 +153,10 @@ const PricingSection = () => {
                   className={`w-full ${
                     tier.popular ? "bg-[#9b87f5] hover:bg-[#8B5CF6]" : ""
                   }`}
+                  disabled={true}
                 >
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  Claim Special Offer
+                  <X className="mr-2 h-4 w-4" />
+                  Unavailable During Launch Special
                 </Button>
               </CardFooter>
             </Card>
@@ -171,4 +168,3 @@ const PricingSection = () => {
 };
 
 export default PricingSection;
-
