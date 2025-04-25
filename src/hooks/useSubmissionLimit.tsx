@@ -36,7 +36,7 @@ export function useSubmissionLimit(): SubmissionLimitResult {
       
       console.log("Checking submission limit for user:", user.id);
       
-      // Get total paid orders
+      // Get total paid orders - explicitly use 'paid' status
       const { data: orders, error: orderError } = await supabase
         .from('orders')
         .select('id')
@@ -49,7 +49,7 @@ export function useSubmissionLimit(): SubmissionLimitResult {
       }
       
       const paidOrderCount = orders?.length || 0;
-      console.log(`Found ${paidOrderCount} paid orders`);
+      console.log(`Found ${paidOrderCount} paid orders for user ${user.id}`);
       setTotalPaid(paidOrderCount);
       
       // Get total submitted articles

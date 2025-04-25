@@ -48,6 +48,8 @@ const PaymentSuccess = () => {
           return;
         }
 
+        console.log("Found order:", data);
+
         // Only update order if it's not already marked as paid
         if (data.status !== 'paid') {
           console.log("Updating order status to paid");
@@ -67,6 +69,8 @@ const PaymentSuccess = () => {
               setError("Could not update your order status. Please contact support.");
               return;
             }
+            
+            console.log("Order updated successfully with user ID:", user.id);
           } else {
             console.log("User not logged in - storing session ID in localStorage");
             // Store the session ID in localStorage for later association
@@ -83,9 +87,12 @@ const PaymentSuccess = () => {
             
             if (updateError) {
               console.error('Error associating order with user:', updateError);
+            } else {
+              console.log("Order associated with user successfully");
             }
+          } else {
+            console.log("Order already marked as paid");
           }
-          console.log("Order already marked as paid");
         }
 
         // Send confirmation email

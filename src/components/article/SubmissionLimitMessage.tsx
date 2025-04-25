@@ -23,12 +23,18 @@ export const SubmissionLimitMessage = ({ totalPaid }: SubmissionLimitMessageProp
     try {
       await refreshSubmissionStatus();
       toast({
-        description: "Submission status refreshed. If you made a recent purchase, please try again.",
+        description: "Submission status refreshed. If you made a recent purchase, try submitting an article now.",
       });
-      // Redirect to submit-article to trigger a fresh check
-      navigate('/submit-article');
+      // Add a small delay before refreshing the page
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       console.error("Error refreshing status:", error);
+      toast({
+        variant: "destructive",
+        description: "Could not refresh submission status. Please try again.",
+      });
     } finally {
       setIsRefreshing(false);
     }
@@ -60,7 +66,7 @@ export const SubmissionLimitMessage = ({ totalPaid }: SubmissionLimitMessageProp
             <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-md">
               <h3 className="font-medium text-amber-800 mb-2">Did you just make a purchase?</h3>
               <p className="text-sm text-amber-700 mb-3">
-                If you recently made a payment and are still seeing this message, try refreshing your submission status.
+                If you recently made a payment and are still seeing this message, click the button below to refresh your submission status.
               </p>
               <Button 
                 variant="outline" 

@@ -34,6 +34,30 @@ serve(async (req) => {
     const priceId = 'price_0RHfBn3YTXYuny55AtWf3lqn';
     console.log('Using price ID:', priceId);
     
+    // Get user information if available
+    let userId = null;
+    const authHeader = req.headers.get('Authorization');
+    
+    if (authHeader) {
+      try {
+        const supabase = createClient(
+          Deno.env.get('SUPABASE_URL') ?? '',
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+        );
+        
+        const token = authHeader.replace('Bearer ', '');
+        const { data, error } = await supabase.auth.getUser(token);
+        
+        if (!error && data?.user) {
+          userId = data.user.id;
+          console.log('User authenticated:', userId);
+        }
+      } catch (authError) {
+        console.error('Authentication error:', authError);
+        // Continue without user info
+      }
+    }
+    
     // Create checkout session with the specific price ID
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -58,16 +82,23 @@ serve(async (req) => {
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
       );
 
-      const { data: orderData, error: orderError } = await supabase.from('orders').insert({
+      const orderData = {
         stripe_session_id: session.id,
         status: 'pending',
         plan_name: planName
-      }).select();
+      };
+      
+      if (userId) {
+        orderData.user_id = userId;
+        console.log('Including user ID in order:', userId);
+      }
+
+      const { data: orderResponse, error: orderError } = await supabase.from('orders').insert(orderData).select();
 
       if (orderError) {
         console.error('Error creating order:', orderError);
       } else {
-        console.log('Order created:', orderData);
+        console.log('Order created:', orderResponse);
       }
     } catch (dbError) {
       console.error('Database error:', dbError);
