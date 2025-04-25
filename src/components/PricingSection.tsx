@@ -110,10 +110,10 @@ const PricingSection = () => {
                 <CardTitle>{tier.name}</CardTitle>
                 <CardDescription>{tier.description}</CardDescription>
                 <div className="mt-4 flex items-center">
-                  <span className="text-3xl font-bold relative">
-                    {tier.price}
-                    <Slash className="absolute top-1/2 left-0 right-0 text-gray-500 h-6 w-full -rotate-12" />
-                  </span>
+                  <div className="relative inline-block">
+                    <span className="text-3xl font-bold text-gray-300 line-through decoration-red-500 decoration-4">{tier.price}</span>
+                    <span className="text-black text-3xl font-bold ml-2">$97</span>
+                  </div>
                   <span className="text-gray-500 ml-2">one-time</span>
                 </div>
               </CardHeader>
