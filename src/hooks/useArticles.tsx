@@ -8,6 +8,7 @@ interface ArticleInput {
   title: string;
   content: string;
   images?: File[];
+  selectedSites?: string[];
 }
 
 export function useArticles() {
@@ -15,12 +16,17 @@ export function useArticles() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
-  const submitArticle = async ({ title, content, images = [] }: ArticleInput) => {
+  const submitArticle = async ({ title, content, images = [], selectedSites = [] }: ArticleInput) => {
     if (!user) throw new Error("User must be authenticated to submit an article");
     
     const { data: article, error: articleError } = await supabase
       .from('articles')
-      .insert({ title, content, user_id: user.id })
+      .insert({ 
+        title, 
+        content, 
+        user_id: user.id,
+        selected_sites: selectedSites
+      })
       .select()
       .single();
 

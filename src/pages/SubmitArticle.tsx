@@ -109,6 +109,7 @@ const SubmitArticle = () => {
       title: values.title,
       content: values.content,
       images: files ? Array.from(files) : [],
+      selectedSites: values.selectedSites,
     });
     navigate('/refer-friend');
   };
