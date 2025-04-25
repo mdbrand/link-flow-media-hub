@@ -8,7 +8,8 @@ const PricingSection = () => {
   const navigate = useNavigate();
 
   const handlePurchase = (planName: string) => {
-    navigate(`/payment?plan=${encodeURIComponent(planName)}`);
+    // Temporarily redirect all plans to Launch Special
+    navigate(`/payment?plan=${encodeURIComponent("Launch Special")}`);
   };
 
   // Define pricing tiers
@@ -131,7 +132,7 @@ const PricingSection = () => {
                   }`}
                 >
                   <CreditCard className="mr-2 h-4 w-4" />
-                  Select Plan
+                  Claim Special Offer
                 </Button>
               </CardFooter>
             </Card>
@@ -143,3 +144,4 @@ const PricingSection = () => {
 };
 
 export default PricingSection;
+
