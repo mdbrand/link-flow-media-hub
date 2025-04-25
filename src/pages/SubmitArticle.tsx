@@ -6,15 +6,18 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { useNavigate } from 'react-router-dom';
 import { useArticles } from '@/hooks/useArticles';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from "@/hooks/use-toast";
+import { useSubmissionLimit } from "@/hooks/useSubmissionLimit";
 import Header from '@/components/Header';
 import { WordCounter } from '@/components/article/WordCounter';
 import { ImageUploader } from '@/components/article/ImageUploader';
 import { SiteSelector } from '@/components/article/SiteSelector';
+import { AlertCircle, AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -46,6 +49,7 @@ const SubmitArticle = () => {
   const { user, loading } = useAuth();
   const { submitArticle, isSubmitting } = useArticles();
   const { toast } = useToast();
+  const { canSubmit, isLoading: checkingLimit, remainingSubmissions, totalPaid } = useSubmissionLimit();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -69,7 +73,7 @@ const SubmitArticle = () => {
     }
   }, [user, loading, navigate, toast]);
 
-  if (loading) {
+  if (loading || checkingLimit) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -82,6 +86,42 @@ const SubmitArticle = () => {
 
   if (!user && !loading) {
     return null;
+  }
+  
+  if (!canSubmit && !checkingLimit) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex-1 p-4 max-w-4xl mx-auto w-full">
+          <Card>
+            <CardHeader>
+              <CardTitle>Submission Limit Reached</CardTitle>
+              <CardDescription>
+                You've used all your available article submissions.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Alert variant="warning">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Submission Limit</AlertTitle>
+                <AlertDescription>
+                  Each payment allows for one article submission. You've already submitted {totalPaid} article{totalPaid !== 1 ? 's' : ''}.
+                </AlertDescription>
+              </Alert>
+              <p>To submit more articles, you'll need to make another purchase.</p>
+            </CardContent>
+            <CardFooter className="flex justify-between">
+              <Button variant="outline" onClick={() => navigate('/submissions')}>
+                View My Submissions
+              </Button>
+              <Button onClick={() => navigate('/payment')}>
+                Purchase Another Submission
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
+    );
   }
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -131,10 +171,19 @@ const SubmitArticle = () => {
       <div className="flex-1 p-4 max-w-4xl mx-auto w-full">
         <Card>
           <CardHeader>
-            <CardTitle>Submit Your Article</CardTitle>
-            <CardDescription>
-              Write your article for publication. Minimum 800 words required.
-            </CardDescription>
+            <div className="flex justify-between items-start">
+              <div>
+                <CardTitle>Submit Your Article</CardTitle>
+                <CardDescription>
+                  Write your article for publication. Minimum 800 words required.
+                </CardDescription>
+              </div>
+              {remainingSubmissions > 0 && (
+                <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+                  {remainingSubmissions} submission{remainingSubmissions !== 1 ? 's' : ''} remaining
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             <Form {...form}>

@@ -5,20 +5,24 @@ import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 const PaymentSuccess = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session_id');
+  const { user } = useAuth();
 
   useEffect(() => {
-    const sendConfirmationEmail = async () => {
+    const processPayment = async () => {
       try {
+        if (!sessionId) return;
+        
         // Get order details from Supabase
         const { data, error } = await supabase
           .from('orders')
-          .select('plan_name')
+          .select('plan_name, id')
           .eq('stripe_session_id', sessionId)
           .single();
 
@@ -33,10 +37,25 @@ const PaymentSuccess = () => {
           return;
         }
 
+        // Update order with user_id and status='paid' if user is logged in
+        if (user) {
+          const { error: updateError } = await supabase
+            .from('orders')
+            .update({ 
+              user_id: user.id,
+              status: 'paid' 
+            })
+            .eq('id', data.id);
+
+          if (updateError) {
+            console.error('Error updating order:', updateError);
+          }
+        }
+
         // Send confirmation email
         const { error: emailError } = await supabase.functions.invoke('send-payment-confirmation', {
           body: { 
-            email: 'guest@example.com', // For now using a default email since user might not be signed in
+            email: user?.email || 'guest@example.com',
             planName: data.plan_name 
           }
         });
@@ -55,16 +74,20 @@ const PaymentSuccess = () => {
         description: "Thank you for your purchase. Let's create your account to get started.",
       });
       
-      // Send confirmation email
-      sendConfirmationEmail();
+      // Process payment
+      processPayment();
       
-      // Redirect to signup after a short delay
+      // Redirect to signup or submit-article after a short delay
       const timer = setTimeout(() => {
-        navigate('/signup');
+        if (user) {
+          navigate('/submit-article');
+        } else {
+          navigate('/signup');
+        }
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [sessionId, toast, navigate]);
+  }, [sessionId, toast, navigate, user]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
@@ -74,10 +97,13 @@ const PaymentSuccess = () => {
         </div>
         <h1 className="text-3xl font-bold">Payment Successful!</h1>
         <p className="text-gray-600">
-          Thank you for your purchase. You'll be redirected to create your account in a moment.
+          {user 
+            ? "Thank you for your purchase. You'll be redirected to submit your article in a moment."
+            : "Thank you for your purchase. You'll be redirected to create your account in a moment."
+          }
         </p>
-        <Button onClick={() => navigate('/signup')} className="w-full">
-          Create Account Now
+        <Button onClick={() => user ? navigate('/submit-article') : navigate('/signup')} className="w-full">
+          {user ? "Submit Article Now" : "Create Account Now"}
         </Button>
       </div>
     </div>
