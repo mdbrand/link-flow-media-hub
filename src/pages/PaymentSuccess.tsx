@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const PaymentSuccess = () => {
   const { toast } = useToast();
@@ -12,11 +13,45 @@ const PaymentSuccess = () => {
   const sessionId = searchParams.get('session_id');
 
   useEffect(() => {
+    const sendConfirmationEmail = async () => {
+      try {
+        // Get order details from Supabase
+        const { data: orders, error: orderError } = await supabase
+          .from('orders')
+          .select('plan_name')
+          .eq('stripe_session_id', sessionId)
+          .single();
+
+        if (orderError) {
+          console.error('Error fetching order:', orderError);
+          return;
+        }
+
+        // Send confirmation email
+        const { error } = await supabase.functions.invoke('send-payment-confirmation', {
+          body: { 
+            email: 'guest@example.com', // For now using a default email since user might not be signed in
+            planName: orders.plan_name 
+          }
+        });
+
+        if (error) {
+          console.error('Error sending confirmation email:', error);
+        }
+      } catch (error) {
+        console.error('Error in confirmation process:', error);
+      }
+    };
+
     if (sessionId) {
       toast({
         title: "Payment Successful!",
         description: "Thank you for your purchase. Let's create your account to get started.",
       });
+      
+      // Send confirmation email
+      sendConfirmationEmail();
+      
       // Redirect to signup after a short delay
       const timer = setTimeout(() => {
         navigate('/signup');
