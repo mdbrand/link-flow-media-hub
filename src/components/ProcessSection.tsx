@@ -20,7 +20,7 @@ const processSteps = [
   {
     icon: <Award className="h-12 w-12 text-[#9b87f5]" />,
     title: "Get Featured",
-    description: "Your content gets published across our network of 12 premium media sites, boosting your visibility."
+    description: "Your content gets published across our media network, boosting your visibility and credibility."
   }
 ];
 
