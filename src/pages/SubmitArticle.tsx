@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -18,7 +17,8 @@ import Header from '@/components/Header';
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
   content: z.string().min(800, "Article must be at least 800 words"),
-  images: z.array(z.string()).max(3, "Maximum 3 images allowed")
+  images: z.array(z.string()).max(3, "Maximum 3 images allowed"),
+  selectedSites: z.array(z.string()).min(6, "Please select 6 sites").max(6, "Maximum 6 sites allowed")
 });
 
 const SubmitArticle = () => {
@@ -35,11 +35,24 @@ const SubmitArticle = () => {
     defaultValues: {
       title: "",
       content: "",
-      images: []
+      images: [],
+      selectedSites: []
     },
   });
 
-  // Redirect if not authenticated after loading completes
+  const availableSites = [
+    { id: "site1", name: "Tech Insider Daily" },
+    { id: "site2", name: "Business Growth Weekly" },
+    { id: "site3", name: "Digital Innovation Hub" },
+    { id: "site4", name: "Marketing Trends Today" },
+    { id: "site5", name: "Startup Success Stories" },
+    { id: "site6", name: "Enterprise Solutions Review" },
+    { id: "site7", name: "Future Tech Magazine" },
+    { id: "site8", name: "Industry Leaders Forum" },
+    { id: "site9", name: "Global Business Insights" },
+    { id: "site10", name: "Digital Transformation Weekly" }
+  ];
+
   useEffect(() => {
     if (!loading && !user) {
       console.log("No authenticated user found, redirecting to signup");
@@ -52,7 +65,6 @@ const SubmitArticle = () => {
     }
   }, [user, loading, navigate, toast]);
 
-  // If still loading auth state, show loading indicator
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -64,7 +76,6 @@ const SubmitArticle = () => {
     );
   }
 
-  // If not authenticated and not loading, stop rendering the rest of component
   if (!user && !loading) {
     return null;
   }
@@ -146,6 +157,49 @@ const SubmitArticle = () => {
                             <Text size={16} />
                             <span>{wordCount} words</span>
                           </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="selectedSites"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Select 6 Media Sites for Publication</FormLabel>
+                      <FormControl>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {availableSites.map((site) => (
+                            <div key={site.id} className="flex items-center space-x-2">
+                              <input
+                                type="checkbox"
+                                id={site.id}
+                                checked={field.value?.includes(site.id)}
+                                onChange={(e) => {
+                                  const updatedSelection = e.target.checked
+                                    ? [...(field.value || []), site.id]
+                                    : field.value?.filter((id) => id !== site.id) || [];
+                                  if (updatedSelection.length <= 6) {
+                                    field.onChange(updatedSelection);
+                                  } else {
+                                    toast({
+                                      variant: "destructive",
+                                      title: "Selection limit reached",
+                                      description: "You can only select 6 sites",
+                                    });
+                                  }
+                                }}
+                                className="h-4 w-4 rounded border-gray-300 text-[#9b87f5] focus:ring-[#9b87f5]"
+                                disabled={!field.value?.includes(site.id) && (field.value?.length || 0) >= 6}
+                              />
+                              <label htmlFor={site.id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                {site.name}
+                              </label>
+                            </div>
+                          ))}
                         </div>
                       </FormControl>
                       <FormMessage />

@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Check, CreditCard, Sparkles, Slash } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +11,6 @@ const PricingSection = () => {
     navigate(`/payment?plan=${encodeURIComponent("Launch Special")}`);
   };
 
-  // Define pricing tiers
   const pricingTiers = [
     {
       name: "Starter",
@@ -46,7 +44,7 @@ const PricingSection = () => {
       price: "$997",
       description: "Complete solution for established businesses",
       features: [
-        "Featured on ALL 12 media sites",
+        "Featured on ALL media sites",
         "3 article submissions",
         "Premium AI adaptation",
         "VIP editorial review",
@@ -70,7 +68,7 @@ const PricingSection = () => {
                 <div>
                   <h3 className="text-2xl font-bold text-white">🎉 Special Launch Offer</h3>
                   <p className="text-purple-100 text-lg">
-                    Get published on ALL 12 media sites for just <span className="font-bold text-yellow-300">$97</span>
+                    Get published on 6 media sites of your choice for just <span className="font-bold text-yellow-300">$97</span>
                   </p>
                 </div>
               </div>

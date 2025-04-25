@@ -20,7 +20,7 @@ const BottomCtaBanner = () => {
                 <div className="text-center lg:text-left">
                   <h3 className="text-3xl font-bold text-white mb-2">Don't Miss This Opportunity! 🚀</h3>
                   <p className="text-xl text-purple-100">
-                    For a limited time, get your content featured on all <span className="font-bold text-yellow-300">12 premium sites</span> for an incredible <span className="font-bold text-yellow-300">$97</span>
+                    For a limited time, get your content featured on <span className="font-bold text-yellow-300">6 premium sites of your choice</span> for an incredible <span className="font-bold text-yellow-300">$97</span>
                   </p>
                 </div>
               </div>
