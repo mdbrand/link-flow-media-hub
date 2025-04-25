@@ -17,10 +17,6 @@ export const faqs = [
     answer: "The timeline depends on the package you choose. Our Starter package has a 30-day publishing window, Growth package 14 days, and Enterprise package just 7 days. This is the maximum time it takes to get your content published across all included sites."
   },
   {
-    question: "Do I retain the rights to my published content?",
-    answer: "Yes, you retain the intellectual property rights to your core content. However, the adapted versions published on our partner sites will typically belong to those publications, as is standard in media publishing."
-  },
-  {
     question: "What types of content can I submit?",
     answer: "We accept thought leadership articles, industry analyses, how-to guides, and opinion pieces. Content should be informative and valuable to readers rather than overtly promotional. Our team can help guide you on creating appropriate content during onboarding."
   },
@@ -29,3 +25,4 @@ export const faqs = [
     answer: "Yes, it is only $97 to have a unique article published across our media network sites. Our AI will create a brand new article based on the single article you submit, tailoring it to fit the theme of each website to ensure relevance and alignment. It's an exceptional value, but this limited-time offer won't last long."
   }
 ];
+
