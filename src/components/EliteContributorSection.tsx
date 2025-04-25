@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +11,7 @@ const EliteContributorSection = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-amber-200 to-yellow-400">
-            Want to Be Recognized as a Bonafide Thought Leader?
+            Want to Be Recognized as a bonafide Thought Leader?
           </h2>
           <p className="text-xl text-slate-300 max-w-3xl mx-auto">
             Start publishing under your own byline on a premium media network.
