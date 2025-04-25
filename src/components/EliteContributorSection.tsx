@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
@@ -47,6 +46,10 @@ const EliteContributorSection = () => {
             {
               title: "Add Bylines for Your Clients or Team",
               description: "Want to publish under multiple names? As an Elite Contributor, you can add extra bylines for just $497 each, perfect for agencies, ghostwriters, or PR teams who manage multiple voices."
+            },
+            {
+              title: "Rapidly Increase Your Rankings",
+              description: "Boost your domain authority and search engine visibility through strategic, high-quality content placements across our premium media network. Get noticed by top-tier publications and watch your online influence soar."
             }
           ].map((feature, index) => (
             <div 
