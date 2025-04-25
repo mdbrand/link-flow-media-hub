@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
 import Stripe from 'https://esm.sh/stripe@13.6.0'
@@ -30,8 +29,8 @@ serve(async (req) => {
       apiVersion: '2023-10-16',
     });
 
-    // Using the fixed price ID for all plans during the launch special period
-    const priceId = 'price_0RHfBn3YTXYuny55AtWf3lqn';
+    // Updated price ID for the $97 plan
+    const priceId = 'price_0RHilP3YTXYuny55upxqk4bB';
     console.log('Using price ID:', priceId);
     
     // Get user information if available
@@ -58,7 +57,7 @@ serve(async (req) => {
       }
     }
     
-    // Create checkout session with the specific price ID
+    // Create checkout session with the new price ID
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
