@@ -1,4 +1,3 @@
-
 export const faqs = [
   {
     question: "Are these real sites with SEO benefits?",
@@ -26,7 +25,7 @@ export const faqs = [
   },
   {
     question: "Can I publish for my clients or use multiple bylines?",
-    answer: "Absolutely. If you're an agency, ghostwriter, or PR team, you can add extra bylines for just $497 each (only available to Elite Contributors). This lets you publish for different clients under different names, all managed under your single account."
+    answer: "Absolutely. If you're an agency, ghostwriter, or PR team, you can add extra bylines for just $497 each (<a href='#elite-contributor-section' className='text-purple-400 hover:text-purple-300'>only available to Elite Contributors</a>). This lets you publish for different clients under different names, all managed under your single account."
   },
   {
     question: "What kind of content is allowed?",

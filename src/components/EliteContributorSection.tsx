@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +6,7 @@ const EliteContributorSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-16 px-4 bg-gradient-to-br from-slate-900 to-slate-800 text-white">
+    <section id="elite-contributor-section" className="py-16 px-4 bg-gradient-to-br from-slate-900 to-slate-800 text-white">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-amber-200 to-yellow-400">
