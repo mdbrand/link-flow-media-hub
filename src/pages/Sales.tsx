@@ -25,7 +25,7 @@ const Sales = () => {
           </p>
           
           {/* Stars centered between subtitle and next section */}
-          <div className="flex justify-center text-yellow-500 my-12">
+          <div className="flex justify-center text-yellow-500 my-8">
             {[...Array(5)].map((_, index) => (
               <Star key={index} className="h-8 w-8 fill-current mx-1" />
             ))}
