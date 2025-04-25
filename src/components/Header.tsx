@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -53,9 +53,9 @@ const Header = () => {
         <div className="hidden md:flex items-center gap-4">
           {user ? (
             <>
-              <Link to="/submit-article">
+              <Link to="/submissions">
                 <Button variant="outline" className="hover:bg-[#9b87f5] hover:text-white">
-                  Submit Article
+                  My Submissions
                 </Button>
               </Link>
               <Button 
@@ -67,12 +67,20 @@ const Header = () => {
               </Button>
             </>
           ) : (
-            <Button 
-              onClick={() => scrollToSection('pricing')}
-              className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white"
-            >
-              Start Here
-            </Button>
+            <>
+              <Link to="/signup">
+                <Button variant="ghost" className="text-gray-600 hover:text-[#9b87f5]">
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Sign In
+                </Button>
+              </Link>
+              <Button 
+                onClick={() => scrollToSection('pricing')}
+                className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white"
+              >
+                Start Here
+              </Button>
+            </>
           )}
         </div>
         
@@ -91,11 +99,11 @@ const Header = () => {
               {user ? (
                 <>
                   <Link 
-                    to="/submit-article" 
+                    to="/submissions" 
                     className="text-gray-600 hover:text-[#9b87f5] font-medium transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Submit Article
+                    My Submissions
                   </Link>
                   <Button 
                     onClick={() => {
@@ -109,15 +117,24 @@ const Header = () => {
                   </Button>
                 </>
               ) : (
-                <Button 
-                  onClick={() => {
-                    scrollToSection('pricing');
-                    setIsMenuOpen(false);
-                  }}
-                  className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white w-full"
-                >
-                  Start Here
-                </Button>
+                <>
+                  <Link 
+                    to="/signup"
+                    className="text-gray-600 hover:text-[#9b87f5] font-medium transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Sign In
+                  </Link>
+                  <Button 
+                    onClick={() => {
+                      scrollToSection('pricing');
+                      setIsMenuOpen(false);
+                    }}
+                    className="bg-[#9b87f5] hover:bg-[#8B5CF6] text-white w-full"
+                  >
+                    Start Here
+                  </Button>
+                </>
               )}
             </nav>
           </div>
