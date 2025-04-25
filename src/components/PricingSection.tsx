@@ -8,7 +8,6 @@ const PricingSection = () => {
   const navigate = useNavigate();
 
   const handlePurchase = (planName: string) => {
-    // Temporarily redirect all plans to Launch Special
     navigate(`/payment?plan=${encodeURIComponent("Launch Special")}`);
   };
 
@@ -64,14 +63,32 @@ const PricingSection = () => {
         <div className="mb-12 transform hover:scale-105 transition-transform">
           <div className="bg-gradient-to-r from-[#8B5CF6] to-[#D946EF] rounded-lg p-6 shadow-lg border border-purple-300">
             <div className="flex items-center justify-between flex-col md:flex-row gap-6">
-              <div className="flex items-center space-x-4">
-                <Sparkles className="h-8 w-8 text-yellow-300 animate-pulse" />
-                <div>
-                  <h3 className="text-2xl font-bold text-white">🎉 Special Launch Offer</h3>
-                  <p className="text-purple-100 text-lg">
-                    Get published on 6 media sites of your choice for just <span className="font-bold text-yellow-300">$97</span>
-                  </p>
+              <div>
+                <div className="flex items-center space-x-4 mb-4">
+                  <Sparkles className="h-8 w-8 text-yellow-300 animate-pulse" />
+                  <h3 className="text-2xl font-bold text-white">🎉 Exclusive Limited Time Offer Special</h3>
                 </div>
+                <p className="text-purple-100 text-lg mb-4">
+                  Get published on 6 media sites of your choice for just <span className="font-bold text-yellow-300">$97</span>
+                </p>
+                <ul className="text-white space-y-2 mb-4">
+                  <li className="flex items-center">
+                    <Check className="h-5 w-5 text-yellow-300 mr-2" />
+                    Select from our list of 12 premium sites
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-5 w-5 text-yellow-300 mr-2" />
+                    Advanced AI custom articles
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-5 w-5 text-yellow-300 mr-2" />
+                    Request publishing date (within a 45-day window)
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-5 w-5 text-yellow-300 mr-2" />
+                    Priority editorial review
+                  </li>
+                </ul>
               </div>
               <Button 
                 onClick={() => handlePurchase("Launch Special")}
