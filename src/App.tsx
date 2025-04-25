@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Payment from "./pages/Payment";
 import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 import SubmitArticle from "./pages/SubmitArticle";
 import ReferFriend from "./pages/ReferFriend";
 import AuthCallback from "./pages/AuthCallback";
@@ -29,7 +30,7 @@ const App = () => (
             <Route path="/payment" element={<Payment />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
             <Route path="/submit-article" element={<SubmitArticle />} />
             <Route path="/refer-friend" element={<ReferFriend />} />
             <Route path="/auth-callback" element={<AuthCallback />} />
