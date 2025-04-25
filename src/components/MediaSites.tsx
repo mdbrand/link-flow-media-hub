@@ -1,5 +1,4 @@
-
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Globe } from "lucide-react";
 
@@ -8,85 +7,73 @@ const mediaSites = [
     name: "The LA Note",
     cover: "https://images.unsplash.com/photo-1533488765986-dfa2a9939acd?w=800&auto=format&fit=crop&q=60",
     description: "Entertainment media platform with high domain authority and extensive reach.",
-    type: "Entertainment",
-    rating: 39
+    type: "Entertainment"
   },
   {
     name: "Thought Leaders Ethos",
     cover: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&auto=format&fit=crop&q=60",
     description: "Premier platform for entrepreneurial thought leadership and business insights.",
-    type: "Entrepreneurial",
-    rating: 18
+    type: "Entrepreneurial"
   },
   {
     name: "MDBRAND",
     cover: "https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?w=800&auto=format&fit=crop&q=60",
     description: "Leading digital marketing publication focused on brand development strategies.",
-    type: "Digital Marketing",
-    rating: 17
+    type: "Digital Marketing"
   },
   {
     name: "Booked Impact",
     cover: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&auto=format&fit=crop&q=60",
     description: "Platform dedicated to entrepreneurial success stories and business growth.",
-    type: "Entrepreneurial",
-    rating: 12
+    type: "Entrepreneurial"
   },
   {
     name: "Seismic Sports",
     cover: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&auto=format&fit=crop&q=60",
     description: "Comprehensive sports coverage and analysis platform.",
-    type: "Sports",
-    rating: 11
+    type: "Sports"
   },
   {
     name: "New York Post Daily",
     cover: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800&auto=format&fit=crop&q=60",
     description: "Entertainment and lifestyle news coverage with broad audience reach.",
-    type: "Entertainment",
-    rating: 10
+    type: "Entertainment"
   },
   {
     name: "Authentic Sacrifice",
-    cover: "https://images.unsplash.com/photo-1520187044487-b2efb58f0cba?w=800&auto=format&fit=crop&q=60",
+    cover: "https://images.unsplash.com/photo-1520187044341-b2f36c9ce96d?w=800&auto=format&fit=crop&q=60",
     description: "Faith-based platform exploring religious and spiritual topics.",
-    type: "Religious",
-    rating: 9
+    type: "Religious"
   },
   {
     name: "Authority Maximizer",
     cover: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&auto=format&fit=crop&q=60",
     description: "Resource for entrepreneurs looking to build authority in their niche.",
-    type: "Entrepreneurial",
-    rating: 9
+    type: "Entrepreneurial"
   },
   {
     name: "Live Love Hobby",
     cover: "https://images.unsplash.com/photo-1472289065668-ce650ac443d2?w=800&auto=format&fit=crop&q=60",
     description: "Platform celebrating hobbies and recreational pursuits.",
-    type: "Hobby",
-    rating: 9
+    type: "Hobby"
   },
   {
     name: "MDB Consultancy",
     cover: "https://images.unsplash.com/photo-1552581234-26160f608093?w=800&auto=format&fit=crop&q=60",
     description: "Professional business consultancy insights and expertise.",
-    type: "Business Consultancy",
-    rating: 9
+    type: "Business Consultancy"
   },
   {
     name: "Trending Consumerism",
     cover: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800&auto=format&fit=crop&q=60",
     description: "Latest trends and insights in consumer behavior and markets.",
-    type: "Consumer",
-    rating: 5
+    type: "Consumer"
   },
   {
     name: "HKlub Fitness",
     cover: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&auto=format&fit=crop&q=60",
     description: "Health and fitness focused content for wellness enthusiasts.",
-    type: "Fitness",
-    rating: 3
+    type: "Fitness"
   }
 ];
 
@@ -121,7 +108,6 @@ const MediaSites = () => {
                     <Globe className="w-3 h-3 mr-1" />
                     {site.type}
                   </Badge>
-                  <Badge variant="secondary">DR {site.rating}</Badge>
                 </div>
               </CardContent>
             </Card>
