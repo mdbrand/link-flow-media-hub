@@ -18,7 +18,7 @@ const Submissions = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate('/signup');
+      navigate('/signin');
       return;
     }
 
@@ -48,8 +48,18 @@ const Submissions = () => {
   }, [user, navigate, toast]);
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
+    try {
+      console.log("Submissions: Initiating sign out");
+      await signOut();
+      // Navigation is handled in the signOut function
+    } catch (error) {
+      console.error("Submissions: Error during sign out:", error);
+      toast({
+        variant: "destructive",
+        title: "Error signing out",
+        description: "There was a problem signing out. Please try again.",
+      });
+    }
   };
 
   if (loading) {

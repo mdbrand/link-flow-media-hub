@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogIn } from "lucide-react";
@@ -28,6 +29,17 @@ const Header = () => {
       }
     }
     setIsMenuOpen(false);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      console.log("Header: Initiating sign out");
+      await signOut();
+      // Navigation is handled in the signOut function
+      setIsMenuOpen(false);
+    } catch (error) {
+      console.error("Header: Error during sign out:", error);
+    }
   };
 
   const navLinks = [
@@ -78,7 +90,7 @@ const Header = () => {
                 </Button>
               </Link>
               <Button 
-                onClick={signOut}
+                onClick={handleSignOut}
                 variant="ghost"
                 className="text-gray-600 hover:text-[#9b87f5]"
               >
@@ -125,10 +137,7 @@ const Header = () => {
                     My Submissions
                   </Link>
                   <Button 
-                    onClick={() => {
-                      signOut();
-                      setIsMenuOpen(false);
-                    }}
+                    onClick={handleSignOut}
                     variant="ghost"
                     className="justify-start p-0 h-auto text-gray-600 hover:text-[#9b87f5] font-medium transition-colors"
                   >
