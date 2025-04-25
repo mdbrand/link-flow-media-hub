@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
@@ -72,10 +71,10 @@ const EliteContributorSection = () => {
 
         <div className="text-center">
           <Button 
-            onClick={() => navigate('/payment?plan=Elite Contributor')}
+            onClick={() => window.open('https://cal.com/rpene/30min', '_blank', 'noopener,noreferrer')}
             className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-6 text-lg rounded-full shadow-xl hover:shadow-2xl transition-all"
           >
-            Become an Elite Contributor
+            Book A Call With Rob
           </Button>
         </div>
       </div>
