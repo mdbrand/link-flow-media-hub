@@ -15,7 +15,7 @@ const Sales = () => {
       
       {/* Main Content */}
       <div className="max-w-3xl mx-auto px-4 py-8">
-        <section className="mb-12">
+        <section className="mb-6">
           <h2 className="text-3xl font-bold mb-6">The Media Coverage Breakthrough</h2>
           <p className="text-lg mb-6 leading-relaxed text-gray-700">
             Remember the last time you tried getting featured in a publication? The endless emails. 
