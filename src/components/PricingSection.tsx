@@ -1,5 +1,6 @@
+
 import { Button } from "@/components/ui/button";
-import { Check, CreditCard, Sparkles, Slash } from "lucide-react";
+import { Check, CreditCard, Sparkles } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 
@@ -17,8 +18,8 @@ const PricingSection = () => {
       price: "$297",
       description: "Perfect for small businesses and startups",
       features: [
-        "Featured on 4 media sites",
-        "1 article submission",
+        "Featured on 3 media sites",
+        "1 revision request",
         "Basic AI adaptation",
         "Editorial review",
         "30-day publishing window"
@@ -30,8 +31,8 @@ const PricingSection = () => {
       price: "$497",
       description: "Ideal for growing businesses seeking wider reach",
       features: [
-        "Featured on 8 media sites",
-        "2 article submissions",
+        "Featured on 6 media sites",
+        "2 revision requests",
         "Advanced AI adaptation",
         "Priority editorial review",
         "21-day publishing window",
@@ -45,12 +46,12 @@ const PricingSection = () => {
       description: "Complete solution for established businesses",
       features: [
         "Featured on ALL media sites",
-        "3 article submissions",
+        "3 revision requests",
         "Premium AI adaptation",
         "VIP editorial review",
         "14-day publishing window",
         "Social media amplification",
-        "Analytics dashboard"
+        "Podcast interview, guaranteed booking"
       ],
       popular: false
     }
@@ -145,3 +146,4 @@ const PricingSection = () => {
 };
 
 export default PricingSection;
+
