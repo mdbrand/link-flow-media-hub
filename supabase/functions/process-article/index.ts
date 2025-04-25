@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { Client } from "npm:@notionhq/client"
 import OpenAI from "https://esm.sh/openai@4.20.1"
@@ -42,9 +43,11 @@ function truncateContent(content: string, maxLength: number = 2000): string {
 }
 
 async function generateUniqueArticle(originalContent: string, siteName: string) {
-  const siteGuideline = siteGuidelines[siteName as keyof typeof siteGuidelines] || "";
-  
-  const prompt = `You are a professional content writer specializing in adapting articles for different websites while maintaining their core message.
+  try {
+    const siteGuideline = siteGuidelines[siteName as keyof typeof siteGuidelines] || "";
+    console.log(`Generating unique article for site: ${siteName}`);
+    
+    const prompt = `You are a professional content writer specializing in adapting articles for different websites while maintaining their core message.
 
 Voice and Tone Guidelines for ${siteName}:
 ${siteGuideline}
@@ -60,42 +63,54 @@ Make sure the rewritten article:
 4. Reads naturally and engagingly
 5. Is unique and different from other versions`
 
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [
-      { 
-        role: "system", 
-        content: "You are an expert content writer who adapts articles for different websites while maintaining their core message." 
-      },
-      { role: "user", content: prompt }
-    ],
-  })
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [
+        { 
+          role: "system", 
+          content: "You are an expert content writer who adapts articles for different websites while maintaining their core message." 
+        },
+        { role: "user", content: prompt }
+      ],
+    })
 
-  return completion.choices[0].message.content
+    console.log(`Successfully generated content for ${siteName}`);
+    return completion.choices[0].message.content;
+  } catch (error) {
+    console.error(`Error generating article for ${siteName}:`, error);
+    throw error;
+  }
 }
 
 async function createNotionPage(title: string, content: string, siteName: string) {
-  const truncatedContent = truncateContent(content);
+  try {
+    console.log(`Creating Notion page for site: ${siteName}`);
+    const truncatedContent = truncateContent(content);
 
-  const response = await notion.pages.create({
-    parent: { database_id: databaseId },
-    properties: {
-      title: {
-        title: [{ text: { content: `${title} - ${siteName}` } }]
-      }
-    },
-    children: [
-      {
-        object: 'block',
-        type: 'paragraph',
-        paragraph: {
-          rich_text: [{ text: { content: truncatedContent } }]
+    const response = await notion.pages.create({
+      parent: { database_id: databaseId },
+      properties: {
+        title: {
+          title: [{ text: { content: `${title} - ${siteName}` } }]
         }
-      }
-    ]
-  })
-  
-  return response.url
+      },
+      children: [
+        {
+          object: 'block',
+          type: 'paragraph',
+          paragraph: {
+            rich_text: [{ text: { content: truncatedContent } }]
+          }
+        }
+      ]
+    })
+    
+    console.log(`Successfully created Notion page for ${siteName}`);
+    return response.url;
+  } catch (error) {
+    console.error(`Error creating Notion page for ${siteName}:`, error);
+    throw error;
+  }
 }
 
 serve(async (req) => {
@@ -106,7 +121,7 @@ serve(async (req) => {
   try {
     const { title, content, selectedSites, userEmail } = await req.json()
     
-    console.log("Processing article for sites:", selectedSites)
+    console.log("Starting article processing for sites:", selectedSites)
     
     const articleVersions = await Promise.all(
       selectedSites.map(async (site: string) => {
@@ -116,7 +131,9 @@ serve(async (req) => {
       })
     )
 
-    await resend.emails.send({
+    console.log("Successfully generated all article versions, sending email...")
+
+    const emailResult = await resend.emails.send({
       from: 'Article Generator <onboarding@resend.dev>',
       to: userEmail,
       subject: `Your Article Versions Are Ready - ${title}`,
@@ -130,6 +147,8 @@ serve(async (req) => {
         </ul>
       `
     })
+
+    console.log("Email sent successfully:", emailResult)
 
     return new Response(
       JSON.stringify({ success: true, versions: articleVersions }),
@@ -146,3 +165,4 @@ serve(async (req) => {
     )
   }
 })
+
