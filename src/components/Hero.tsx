@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 
 const Hero = () => {
@@ -12,11 +11,11 @@ const Hero = () => {
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 items-center">
         <div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4">
-            Get Featured on <span className="text-[#9b87f5]">12 Media Sites</span> with One Article
+            Get Featured on <span className="text-[#9b87f5]">6 Media Sites</span> with One Article
           </h1>
           <p className="text-xl text-gray-600 mb-8">
             Boost your credibility and reach with our premium media placements. 
-            One article, distributed across 12 top-tier publications, custom-tailored by our AI.
+            One article, distributed across 6 top-tier publications, custom-tailored by our AI.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button 
