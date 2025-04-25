@@ -1,6 +1,7 @@
+
 export const faqs = [
   {
-    question: "How does MediaBoost actually get my content published?",
+    question: "How can you guarantee that I get published?",
     answer: "We have established partnerships with premium media sites in various niches. Our AI technology adapts your content to match each site's editorial guidelines and style requirements, which is then reviewed by our editorial team before submission to our partner publications."
   },
   {
