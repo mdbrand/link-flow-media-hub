@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/hooks/use-toast";
@@ -61,6 +60,7 @@ export const useSignUp = () => {
       if (error) {
         console.error("SignUp: Error during sign up:", error);
         
+        // ---- Restoring original error handling ----
         if (error.message?.includes("User already registered")) {
           toast({
             variant: "destructive",
@@ -72,11 +72,13 @@ export const useSignUp = () => {
         }
         
         // Handle email sending failure - allow user to continue
+        // (Note: This might lead to users being told signup worked when it didn't, 
+        // if Supabase email sending is not configured/working)
         if (error.message?.includes("sending confirmation email") || 
             error.message?.includes("Failed to send email") || 
             error.message?.includes("Error sending confirmation email")) {
           
-          console.log("SignUp: Email sending failed but proceeding with account creation");
+          console.log("SignUp: Email sending failed but proceeding with account creation assumption");
           
           // Since email verification failed, try to sign in the user directly
           const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
@@ -89,11 +91,20 @@ export const useSignUp = () => {
               title: "Account created!",
               description: "Your account was created successfully. Email verification was skipped.",
             });
+            // --- Invoke Owner Notification on assumed success ---
+            try {
+              console.log(`Invoking owner signup notification for ${signInData.user.email} (after email send error)`);
+              await supabase.functions.invoke('send-signup-notification', {
+                body: { newUserEmail: signInData.user.email, newUserId: signInData.user.id }, 
+              });
+            } catch (invokeCatchError) {
+              console.error("Exception invoking owner signup notification (after email send error):", invokeCatchError);
+            }
+            // --- End Owner Notification ---
             navigate('/submissions');
             return;
           } else {
-            // Improved error handling when sign-in fails after account creation
-            console.error("SignUp: Could not sign in after account creation:", signInError);
+            console.error("SignUp: Could not sign in after assumed account creation:", signInError);
             toast({
               variant: "default", 
               title: "Account created",
@@ -103,12 +114,38 @@ export const useSignUp = () => {
             return;
           }
         }
+        // --- End Restored Handling ---
         
-        throw error;
+        // Fallback for other errors
+        setSignUpError(error.message || "Failed to create account. Please try again.");
+        toast({
+          variant: "destructive",
+          title: "Signup Error",
+          description: error.message || "Failed to create account. Please try again.",
+        });
+        return; 
       }
       
       if (data?.user) {
         console.log("SignUp: User created successfully");
+
+        // ---- Invoke Owner Notification Function ----
+        try {
+          console.log(`Invoking owner signup notification for ${data.user.email}`);
+          const { error: invokeError } = await supabase.functions.invoke('send-signup-notification', {
+            // Pass essential user info directly
+            body: { newUserEmail: data.user.email, newUserId: data.user.id }, 
+          });
+          if (invokeError) {
+            // Log error but don't block the user flow
+            console.error("Error invoking owner signup notification:", invokeError);
+          } else {
+            console.log("Successfully invoked owner signup notification.");
+          }
+        } catch (invokeCatchError) {
+          console.error("Exception invoking owner signup notification:", invokeCatchError);
+        }
+        // ---- End Owner Notification ----
         
         // If we have a session already, proceed to the app
         if (data.session) {

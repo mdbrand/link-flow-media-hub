@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Check } from 'lucide-react';
@@ -50,74 +49,34 @@ const PaymentSuccess = () => {
 
         console.log("Found order:", data);
 
-        // Only update order if it's not already marked as paid
-        if (data.status !== 'paid') {
-          console.log("Updating order status to paid");
-          
-          // Update order with user_id and status='paid' if user is logged in
-          const updateData: any = { status: 'paid' };
-          if (user) {
-            updateData.user_id = user.id;
-          }
-          
+        // --- Revised Logic --- 
+        // Only attempt to associate user_id if the user is logged in 
+        // AND the order doesn't already have a user_id associated.
+        // Do NOT change the status here; webhook handles completion.
+        if (user && data.user_id === null) {
+          console.log(`PaymentSuccess: Associating order ${data.id} with logged-in user ${user.id}`);
           const { error: updateError } = await supabase
             .from('orders')
-            .update(updateData)
+            .update({ user_id: user.id })
             .eq('id', data.id);
 
           if (updateError) {
-            console.error('Error updating order:', updateError);
-            setError("Could not update your order status. Please contact support.");
-            return;
-          }
-          
-          if (user) {
-            console.log("Order updated successfully with user ID:", user.id);
+            console.error('PaymentSuccess: Error associating order with user:', updateError);
+            // Don't block success flow for this error, association will be tried again on next login
           } else {
-            console.log("Order marked as paid, no user is logged in");
+            console.log("PaymentSuccess: Order associated with user successfully");
+            // If we successfully associate here, remove the pending ID
+            localStorage.removeItem('pendingOrderSessionId');
           }
-        } else {
-          // If order is already paid but not associated with user, associate it
-          if (user && !data.user_id) {
-            console.log("Order already marked as paid, associating with user");
-            const { error: updateError } = await supabase
-              .from('orders')
-              .update({ user_id: user.id })
-              .eq('id', data.id);
-            
-            if (updateError) {
-              console.error('Error associating order with user:', updateError);
-            } else {
-              console.log("Order associated with user successfully");
-            }
-          } else {
-            console.log("Order already marked as paid");
-          }
+        } else if (user && data.user_id !== null) {
+           console.log(`PaymentSuccess: Order ${data.id} already has user_id ${data.user_id}.`);
+        } else if (!user) {
+           // User not logged in - store session ID in localStorage for later association
+           console.log("PaymentSuccess: User not logged in - storing session ID in localStorage");
+           localStorage.setItem('pendingOrderSessionId', sessionId);
         }
+        // --- End Revised Logic ---
 
-        // Store the session ID in localStorage for later association
-        if (!user) {
-          console.log("User not logged in - storing session ID in localStorage");
-          localStorage.setItem('pendingOrderSessionId', sessionId);
-        }
-
-        // Send confirmation email
-        try {
-          const { error: emailError } = await supabase.functions.invoke('send-payment-confirmation', {
-            body: { 
-              email: user?.email || 'guest@example.com',
-              planName: data.plan_name 
-            }
-          });
-
-          if (emailError) {
-            console.error('Error sending confirmation email:', emailError);
-            // Don't block process for email errors
-          }
-        } catch (emailErr) {
-          console.error("Error invoking email function:", emailErr);
-        }
-        
         toast({
           title: "Payment Successfully Processed!",
           description: "Thank you for your purchase. You can now submit your article.",

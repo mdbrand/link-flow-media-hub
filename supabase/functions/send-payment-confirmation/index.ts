@@ -1,10 +1,16 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { Resend } from "npm:resend@2.0.0"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+const FROM_EMAIL = Deno.env.get('FROM_EMAIL') ?? 'Lovable Media Network <info@mediaboosterai.pro>';
+
+if (!RESEND_API_KEY) {
+  console.error('Missing RESEND_API_KEY environment variable.');
 }
 
 serve(async (req) => {
@@ -16,10 +22,17 @@ serve(async (req) => {
     const { email, planName } = await req.json()
     console.log('Sending confirmation email to:', email, 'for plan:', planName)
 
-    const resend = new Resend(Deno.env.get('RESEND_API_KEY'))
+    if (!RESEND_API_KEY) {
+      return new Response(JSON.stringify({ error: 'Email service not configured' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
+      });
+    }
+
+    const resend = new Resend(RESEND_API_KEY)
 
     const emailResponse = await resend.emails.send({
-      from: 'Lovable <onboarding@resend.dev>',
+      from: FROM_EMAIL,
       to: [email],
       subject: 'Your Purchase Was Successful!',
       html: `

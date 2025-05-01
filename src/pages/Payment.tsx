@@ -3,8 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, Loader } from "lucide-react";
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+
+// Restore importing the shared Supabase client
+import { supabase } from '@/integrations/supabase/client';
+
+// Define Supabase creds locally (replace with env vars if needed, but hardcoding for test is ok)
+// const SUPABASE_URL = "https://kkvqzujckeigjlxklsyp.supabase.co";
+// const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrdnF6dWpja2VpZ2pseGtsc3lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1MTczNzQsImV4cCI6MjA2MTA5MzM3NH0.Ew74z5F1p5tFMnoQaebMAocvLfmnjrBNSTUhDoSk4Ck";
 
 const Payment = () => {
   const [searchParams] = useSearchParams();
@@ -108,10 +114,18 @@ const Payment = () => {
       setDetailedError('');
       console.log('Initiating checkout for plan:', planName);
       
+      // Remove local client initialization test code
+      // console.log('>>> Re-initializing Supabase client locally for invoke...');
+      // const localSupabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY);
+      // console.log('>>> Local Supabase client created. Invoking function...');
+
+      // Restore original invoke call using the imported supabase client
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { planName },
       });
+      console.log('<<< INVOKE create-checkout FINISHED (or errored)'); 
 
+      // Original error handling and redirect logic (Restored)
       if (error) {
         console.error("Checkout error:", error);
         throw error;

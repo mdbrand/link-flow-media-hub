@@ -1,8 +1,8 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { Client } from "npm:@notionhq/client"
 import OpenAI from "https://esm.sh/openai@4.20.1"
 import { Resend } from "npm:resend@2.0.0"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,6 +18,10 @@ const notion = new Client({
 })
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'))
+const supabase = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+);
 
 const databaseId = Deno.env.get('NOTION_DATABASE_ID') as string
 
@@ -82,33 +86,83 @@ Make sure the rewritten article:
   }
 }
 
+function chunkText(str: string, maxLen = 2000): string[] {
+  const chunks: string[] = [];
+  let i = 0;
+  while (i < str.length) {
+    let end = Math.min(i + maxLen, str.length);
+    const slice = str.slice(i, end);
+    const lastSpace = Math.max(slice.lastIndexOf('\n'), slice.lastIndexOf(' '));
+    if (lastSpace > 0 && end < str.length) end = i + lastSpace;
+    chunks.push(str.slice(i, end));
+    i = end;
+  }
+  return chunks;
+}
+
 async function createNotionPage(title: string, content: string, siteName: string) {
   try {
     console.log(`Creating Notion page for site: ${siteName}`);
-    const truncatedContent = truncateContent(content);
+    // const truncatedContent = truncateContent(content);
 
+    // const response = await notion.pages.create({
+    //   parent: { database_id: databaseId },
+    //   properties: {
+    //     title: {
+    //       title: [{ text: { content: `${title} - ${siteName}` } }]
+    //     }
+    //   },
+    //   children: [
+    //     {
+    //       object: 'block',
+    //       type: 'paragraph',
+    //       paragraph: {
+    //         rich_text: [{ text: { content: truncatedContent } }]
+    //       }
+    //     }
+    //   ]
+    // })
+
+    // Map the chunks of text into Notion block objects
+    const paragraphs = chunkText(content).map(text => ({
+      object: 'block',
+      type: 'paragraph',
+      paragraph: {
+        rich_text: [{
+          text: {
+            content: text
+          }
+        }]
+      }
+    })); // Added closing parenthesis for the object literal inside map
+
+    // Create the Notion page with title and content blocks
     const response = await notion.pages.create({
       parent: { database_id: databaseId },
       properties: {
+        // Define the title property for the Notion page
         title: {
-          title: [{ text: { content: `${title} - ${siteName}` } }]
+          title: [{
+            text: {
+              content: `${title} - ${siteName}` // Use the provided title and siteName
+            }
+          }]
         }
+        // Add other properties here if needed, e.g., status, tags, etc.
+        // Example:
+        // 'Status': { status: { name: 'Draft' } },
       },
-      children: [
-        {
-          object: 'block',
-          type: 'paragraph',
-          paragraph: {
-            rich_text: [{ text: { content: truncatedContent } }]
-          }
-        }
-      ]
-    })
-    
+      children: paragraphs // Add the content paragraphs as children blocks
+    });
+
     console.log(`Successfully created Notion page for ${siteName}`);
+    // Return the URL of the newly created Notion page
     return response.url;
   } catch (error) {
+    // Log any errors that occur during Notion page creation
     console.error(`Error creating Notion page for ${siteName}:`, error);
+    // Return an error message string
+    // Consider throwing the error instead if the caller should handle it more robustly
     return `Error creating Notion page: ${error.message}`;
   }
 }
@@ -123,12 +177,11 @@ serve(async (req) => {
     
     console.log("Starting article processing with email:", userEmail);
     
-    let generatedContents = [];
     let articleVersions = [];
     
     try {
       // First, generate all the unique content
-      generatedContents = await Promise.all(
+      const generatedContents = await Promise.all(
         selectedSites.map(async (site: string) => {
           const uniqueContent = await generateUniqueArticle(content, site);
           return { site, content: uniqueContent };
@@ -155,39 +208,61 @@ serve(async (req) => {
       // We'll continue to send emails even if there was an error
     }
 
-    console.log("Sending confirmation email to:", userEmail);
-    
+    // Invoke the dedicated user article confirmation email function
+    console.log("Invoking send-article-confirmation for:", userEmail);
     try {
-      // Send confirmation email to user with proper hyperlinks
+      const { error: invokeError } = await supabase.functions.invoke('send-article-confirmation', {
+        body: { userEmail: userEmail, articleTitle: title },
+      });
+      if (invokeError) {
+        console.error(`Error invoking send-article-confirmation for ${userEmail}:`, invokeError);
+        // Log error but continue
+      } else {
+        console.log(`Successfully invoked send-article-confirmation for ${userEmail}`);
+      }
+    } catch (invokeCatchError) {
+      console.error(`Exception invoking send-article-confirmation for ${userEmail}:`, invokeCatchError);
+    }
+
+    // --- Send Owner Notification Email ---
+    console.log("Sending owner notification email with Notion links");
+    try {
+      // Use the configured FROM_EMAIL and owner's email
+      const FROM_EMAIL = Deno.env.get('FROM_EMAIL') ?? 'Lovable <no-reply@leadtech.uk>'; 
+      const OWNER_EMAIL = 'olagunjujeremiah@gmail.com'; 
+      // const OWNER_EMAIL = 'missiondrivenbrand@gmail.com'; 
+
+      
       const emailResult = await resend.emails.send({
-        from: 'Article Generator <onboarding@resend.dev>',
-        to: userEmail,
-        subject: `Your Article - ${title} Has Been Submitted`,
+        from: FROM_EMAIL,
+        to: OWNER_EMAIL,
+        subject: `New Article Submitted: ${title}`,
         html: `
-          <h1>Thank You for Your Article Submission</h1>
-          <p>We've received your article titled "${title}" and it's being processed for the following sites:</p>
+          <h1>New Article Submission</h1>
+          <p>User (${userEmail || 'Unknown'}) submitted an article titled "<strong>${title}</strong>".</p>
+          <p>It is being processed for the following sites:</p>
           <ul>
             ${selectedSites.map(site => `<li>${site}</li>`).join('')}
           </ul>
           ${articleVersions.length > 0 ? `
-            <p>Your article versions are ready! Here are the links:</p>
+            <p>Notion page links:</p>
             <ul>
               ${articleVersions.map(v => `
                 <li><strong>${v.site}</strong>: <a href="${v.url}" style="color: #2563eb; text-decoration: underline;">${v.url}</a></li>
               `).join('')}
             </ul>
           ` : `
-            <p>Your article is currently being processed. You'll receive another email once the processing is complete.</p>
+            <p>Notion page creation encountered an error or is pending.</p>
           `}
-          <p>Thank you for using our service!</p>
         `
       });
 
-      console.log("Confirmation email sent successfully:", emailResult);
+      console.log("Owner notification email sent successfully:", emailResult);
     } catch (emailError) {
-      console.error("Error sending confirmation email:", emailError);
-      // Don't throw here - we want to return the article data even if email fails
+      console.error("Error sending owner notification email:", emailError);
+      // Log error but continue
     }
+    // --- Owner Notification End ---
 
     return new Response(
       JSON.stringify({ 
