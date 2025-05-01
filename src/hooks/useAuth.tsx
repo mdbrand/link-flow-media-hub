@@ -1,4 +1,3 @@
-
 import { useEffect, useState, createContext, useContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -42,8 +41,69 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     // IMPORTANT: Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         console.log("AuthProvider: Auth state changed:", event, session?.user?.email);
+        
+        // Check for pending order association ONLY when user signs in
+        if (event === 'SIGNED_IN' && session?.user) {
+          console.log("[OrderAssoc] SIGNED_IN event detected for user:", session.user.id);
+          const pendingOrderSessionId = localStorage.getItem('pendingOrderSessionId');
+          
+          if (pendingOrderSessionId) {
+            console.log(`[OrderAssoc] Found pendingOrderSessionId in localStorage: ${pendingOrderSessionId}`);
+            try {
+              console.log(`[OrderAssoc] Attempting to fetch order with stripe_session_id: ${pendingOrderSessionId}`);
+              // Fetch the order by stripe_session_id
+              const { data: order, error: fetchError } = await supabase
+                .from('orders')
+                .select('id, user_id, status') // Select status too for logging
+                .eq('stripe_session_id', pendingOrderSessionId)
+                .maybeSingle(); 
+
+              if (fetchError) {
+                console.error("[OrderAssoc] Error fetching pending order:", fetchError);
+                // Optionally remove the bad ID from local storage
+                // localStorage.removeItem('pendingOrderSessionId'); 
+              } else if (order) {
+                console.log(`[OrderAssoc] Found order in DB: ID=${order.id}, Current user_id=${order.user_id}, Status=${order.status}`);
+                // Only update if order exists and user_id is NULL
+                if (order.user_id === null) { 
+                  console.log(`[OrderAssoc] Order user_id is NULL. Attempting to update order ID ${order.id} with user_id ${session.user.id}`);
+                  const { error: updateError } = await supabase
+                    .from('orders')
+                    .update({ user_id: session.user.id })
+                    .eq('id', order.id);
+
+                  if (updateError) {
+                    console.error(`[OrderAssoc] Error updating order ID ${order.id}:`, updateError);
+                  } else {
+                    console.log(`[OrderAssoc] Successfully associated order ID ${order.id} with user ${session.user.id}`);
+                    localStorage.removeItem('pendingOrderSessionId'); // Clear from local storage on success
+                    console.log(`[OrderAssoc] Removed pendingOrderSessionId from localStorage.`);
+                    toast({
+                      title: "Order Associated",
+                      description: "Your previous purchase has been linked to your account.",
+                    });
+                  }
+                } else {
+                  // Order already associated, maybe by another flow or previous login
+                  console.log(`[OrderAssoc] Order ID ${order.id} already associated with user ${order.user_id}. Skipping update.`);
+                  localStorage.removeItem('pendingOrderSessionId'); // Clear orphan ID
+                  console.log(`[OrderAssoc] Removed potentially orphaned pendingOrderSessionId from localStorage.`);
+                }
+              } else {
+                // Order not found for the session ID
+                console.warn(`[OrderAssoc] No order found in DB for stripe_session_id: ${pendingOrderSessionId}`);
+                localStorage.removeItem('pendingOrderSessionId'); // Clear orphan ID
+                console.log(`[OrderAssoc] Removed potentially orphaned pendingOrderSessionId from localStorage.`);
+              }
+            } catch (assocError) {
+              console.error("[OrderAssoc] Exception during order association logic:", assocError);
+            }
+          } else {
+            console.log("[OrderAssoc] No pendingOrderSessionId found in localStorage. Skipping association check.");
+          }
+        }
         
         // Handle sign out event specifically
         if (event === 'SIGNED_OUT') {

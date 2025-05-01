@@ -10,6 +10,7 @@ import { WordCounter } from './WordCounter';
 import { ImageUploader } from './ImageUploader';
 import { SiteSelector } from './SiteSelector';
 import { useState } from 'react';
+import { usePersistentFormState } from '@/hooks/usePersistentFormState';
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -53,6 +54,8 @@ export const ArticleForm = ({ onSubmit, isSubmitting, remainingSubmissions }: Ar
       selectedSites: []
     },
   });
+
+  usePersistentFormState(form, "articleFormData");
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const content = e.target.value;
@@ -98,11 +101,9 @@ export const ArticleForm = ({ onSubmit, isSubmitting, remainingSubmissions }: Ar
               Write your article for publication. Minimum 800 words required.
             </CardDescription>
           </div>
-          {remainingSubmissions > 0 && (
-            <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
-              {remainingSubmissions} submission{remainingSubmissions !== 1 ? 's' : ''} remaining
-            </div>
-          )}
+          <div className={`px-3 py-1 rounded-full text-sm font-medium ${remainingSubmissions > 0 ? 'bg-blue-50 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
+            {remainingSubmissions} submission{remainingSubmissions !== 1 ? 's' : ''} remaining
+          </div>
         </div>
       </CardHeader>
       <CardContent>

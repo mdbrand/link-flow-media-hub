@@ -17,8 +17,10 @@ serve(async (req) => {
     const { planName } = await req.json();
     console.log('Plan selected:', planName);
 
+    // Use the LIVE key for production
     const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
     if (!stripeKey) {
+      // Update error message to reflect the key being checked
       console.error('STRIPE_SECRET_KEY is not set in environment variables');
       throw new Error('Stripe key configuration error');
     }
@@ -28,10 +30,15 @@ serve(async (req) => {
     const stripe = new Stripe(stripeKey, {
       apiVersion: '2023-10-16',
     });
+    console.log('Key prefix:', stripeKey?.slice(0,5))
 
-    // Updated price ID for the $97 plan
-    const priceId = 'price_0RHilP3YTXYuny55upxqk4bB';
-    console.log('Using price ID:', priceId);
+    // Read the LIVE price ID from environment variables
+    const priceId = Deno.env.get('STRIPE_PRICE_ID');
+    if (!priceId) {
+      console.error('STRIPE_PRICE_ID is not set in environment variables');
+      throw new Error('Stripe Price ID configuration error');
+    }
+    console.log('Using LIVE price ID:', priceId);
     
     // Get user information if available
     let userId = null;
@@ -85,17 +92,24 @@ serve(async (req) => {
       const priceDetails = await stripe.prices.retrieve(priceId);
       const amount = priceDetails.unit_amount || 2900; // Default to $29 if not found
 
-      const orderData = {
+      // Define the structure for order data, allowing user_id to be potentially null
+      interface OrderInsert {
+        stripe_session_id: string;
+        status: string;
+        plan_name: string;
+        amount: number;
+        user_id?: string | null; // Make user_id optional
+      }
+
+      const orderData: OrderInsert = {
         stripe_session_id: session.id,
         status: 'pending',
         plan_name: planName,
-        amount: amount
+        amount: amount,
+        user_id: userId // Assign userId directly (will be null if not found)
       };
       
-      if (userId) {
-        orderData.user_id = userId;
-        console.log('Including user ID in order:', userId);
-      }
+      console.log(`Attempting to insert order with user_id: ${userId ?? 'NULL'}`);
 
       const { data: orderResponse, error: orderError } = await supabase.from('orders').insert(orderData).select();
 
