@@ -227,11 +227,14 @@ serve(async (req) => {
     // --- Send Owner Notification Email ---
     console.log("Sending owner notification email with Notion links");
     try {
-      // Use the configured FROM_EMAIL and owner's email
-      const FROM_EMAIL = Deno.env.get('FROM_EMAIL') ?? 'Lovable <no-reply@leadtech.uk>'; 
-      const OWNER_EMAIL = 'olagunjujeremiah@gmail.com'; 
-      // const OWNER_EMAIL = 'missiondrivenbrand@gmail.com'; 
+      // Use the configured FROM_EMAIL and read OWNER_EMAIL from secrets
+      const FROM_EMAIL = Deno.env.get('FROM_EMAIL') ?? 'Lovable <info@mediaboosterai.pro>'; 
+      const OWNER_EMAIL = Deno.env.get('OWNER_EMAIL'); 
 
+      if (!OWNER_EMAIL) {
+         console.error("OWNER_EMAIL secret is not set. Cannot send owner notification.");
+         throw new Error("Owner email configuration missing."); // Throw or handle gracefully
+      }
       
       const emailResult = await resend.emails.send({
         from: FROM_EMAIL,
