@@ -8,11 +8,11 @@ const corsHeaders = {
 }
 
 // Read TEST environment variables
-const stripeWebhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET_TEST');
-const stripeKey = Deno.env.get('STRIPE_SECRET_KEY_TEST');
+const stripeWebhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
+const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
 
 if (!stripeKey || !stripeWebhookSecret) {
-  console.error('Missing Stripe TEST environment variables (STRIPE_SECRET_KEY_TEST or STRIPE_WEBHOOK_SECRET_TEST)');
+  console.error('Missing Stripe TEST environment variables (STRIPE_SECRET_KEY or STRIPE_WEBHOOK_SECRET)');
   // Consider how to handle this error more gracefully in production
 }
 
@@ -40,7 +40,7 @@ serve(async (req) => {
       throw new Error('Missing Stripe-Signature header');
     }
     if (!stripeWebhookSecret) {
-      throw new Error('Missing STRIPE_WEBHOOK_SECRET_TEST');
+      throw new Error('Missing STRIPE_WEBHOOK_SECRET');
     }
 
     const event = await stripe.webhooks.constructEventAsync(

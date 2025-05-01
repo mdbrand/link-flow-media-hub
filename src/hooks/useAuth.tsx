@@ -123,15 +123,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
-        
-        // On sign-in, redirect to submit article
-        if (event === 'SIGNED_IN' && session) {
-          console.log("AuthProvider: User signed in, redirecting to submit-article");
-          // Use setTimeout to avoid any potential state update conflicts
-          setTimeout(() => {
-            navigate('/submit-article');
-          }, 0);
-        }
       }
     );
 
@@ -164,6 +155,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Force clear any remaining localStorage items related to auth
       localStorage.removeItem('supabase.auth.token');
+      
+      // --- Add this line to clear the persisted form draft --- 
+      localStorage.removeItem('articleFormData'); 
+      console.log("AuthProvider: Cleared persisted article form data on sign out.");
+      // --- End added line --- 
       
       toast({
         title: "Signed out successfully",
