@@ -25,4 +25,3 @@ dist-ssr
 
 #environement variable
 .env.local
-.env
