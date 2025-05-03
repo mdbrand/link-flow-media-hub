@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -48,7 +47,7 @@ const AuthCallback = () => {
               });
               
               // Redirect to submit article page
-              setTimeout(() => navigate('/submit-article'), 1000);
+              setTimeout(() => navigate('/submissions'), 1000);
               return;
             }
           } catch (codeError) {
@@ -83,7 +82,7 @@ const AuthCallback = () => {
                 description: "You've been successfully authenticated",
               });
               
-              setTimeout(() => navigate('/submit-article'), 500);
+              setTimeout(() => navigate('/submissions'), 500);
               return;
             }
           } else {

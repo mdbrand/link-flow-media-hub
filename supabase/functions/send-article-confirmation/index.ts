@@ -8,7 +8,7 @@ const corsHeaders = {
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 // Assuming you have the app's base URL in an env var for links
-const APP_URL = Deno.env.get('APP_URL') ?? 'http://localhost:3000'; 
+const APP_URL = Deno.env.get('APP_URL') ?? 'http://localhost:8080'; 
 // Update fallback to use production sender details
 const FROM_EMAIL = Deno.env.get('FROM_EMAIL') ?? 'Lovable Media Network <info@mediaboosterai.pro>'; 
 
