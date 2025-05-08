@@ -62,30 +62,35 @@ serve(async (req) => {
 
       if (!customerEmail) {
         console.error(`No customer email found for session: ${stripeSessionId}`);
-        // Decide how to handle missing email - maybe skip email?
-        return new Response(JSON.stringify({ error: 'Missing customer email' }), { status: 400 });
+        // Decide how to handle missing email - maybe skip email prefill logic?
+        // For now, we'll proceed, but the email prefill won't work.
       }
 
       console.log(`Processing checkout success for session: ${stripeSessionId}, Email: ${customerEmail}`);
 
-      // 1. Update order status and retrieve plan name
-      let planName = 'Unknown Plan'; // Default value
+      // 1. Update order status and customer_email, retrieve plan name
+      let planName = 'Unknown Plan';
       try {
+        const updatePayload: { status: string; customer_email?: string } = { status: 'completed' };
+        if (customerEmail) {
+          updatePayload.customer_email = customerEmail;
+        }
+
         const { data: orderData, error: updateError } = await supabase
           .from('orders')
-          .update({ status: 'completed' })
+          .update(updatePayload)
           .eq('stripe_session_id', stripeSessionId)
           .select('plan_name') // Select the plan_name after update
           .single(); // Expect only one matching order
 
         if (updateError) {
-          console.error(`Error updating order status for session ${stripeSessionId}:`, updateError);
+          console.error(`Error updating order status/email for session ${stripeSessionId}:`, updateError);
           // Decide if this error should prevent email sending
         } else if (orderData && orderData.plan_name) {
           planName = orderData.plan_name;
-          console.log(`Order status updated for session: ${stripeSessionId}, Plan: ${planName}`);
+          console.log(`Order status and email updated for session: ${stripeSessionId}, Plan: ${planName}, Email: ${customerEmail}`);
         } else {
-          console.warn(`Order status updated but plan_name not found for session: ${stripeSessionId}`);
+          console.warn(`Order status/email updated but plan_name not found for session: ${stripeSessionId}`);
         }
       } catch (dbError) {
         console.error(`Database error updating order for session ${stripeSessionId}:`, dbError);

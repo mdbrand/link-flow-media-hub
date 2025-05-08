@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -83,8 +82,9 @@ export function useSignInForm() {
 
     setIsResettingPassword(true);
     try {
+      const appUrl = import.meta.env.APP_URL || window.location.origin;
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${appUrl}/reset-password`,
       });
 
       if (error) throw error;

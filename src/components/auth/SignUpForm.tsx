@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -7,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Mail, Key, UserRoundPlus } from "lucide-react";
 import { signUpFormSchema, type SignUpFormData } from "@/hooks/useSignUp";
+import { useEffect } from "react";
 
 interface SignUpFormProps {
   onSubmit: (data: SignUpFormData) => void;
@@ -23,6 +23,14 @@ export const SignUpForm = ({ onSubmit, isLoading, error }: SignUpFormProps) => {
       confirmPassword: "",
     },
   });
+
+  useEffect(() => {
+    const prefillEmail = localStorage.getItem('signupPrefillEmail');
+    if (prefillEmail) {
+      form.setValue('email', prefillEmail);
+      localStorage.removeItem('signupPrefillEmail');
+    }
+  }, [form]);
 
   return (
     <Form {...form}>

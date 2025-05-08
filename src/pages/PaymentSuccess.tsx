@@ -27,10 +27,10 @@ const PaymentSuccess = () => {
         
         console.log("Processing payment with session ID:", sessionId);
         
-        // Get order details from Supabase
+        // Get order details from Supabase, including customer_email
         const { data, error } = await supabase
           .from('orders')
-          .select('plan_name, id, status, user_id')
+          .select('plan_name, id, status, user_id, customer_email')
           .eq('stripe_session_id', sessionId)
           .single();
 
@@ -48,6 +48,12 @@ const PaymentSuccess = () => {
         }
 
         console.log("Found order:", data);
+
+        // Store customer_email in localStorage if user is not logged in and email exists
+        if (!user && data.customer_email) {
+          localStorage.setItem('signupPrefillEmail', data.customer_email);
+          console.log("PaymentSuccess: Stored customer_email for signup prefill:", data.customer_email);
+        }
 
         // --- Revised Logic --- 
         // Only attempt to associate user_id if the user is logged in 
